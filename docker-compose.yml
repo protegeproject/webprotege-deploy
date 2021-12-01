@@ -1,0 +1,117 @@
+version: '2'
+
+services:
+
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data-directory:/data/db
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+    ports:
+      - 2181:2181
+
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    depends_on:
+      - zookeeper
+    ports:
+      - 9092:9092
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  keycloak:
+    image: quay.io/keycloak/keycloak
+    ports:
+      - 8080:8080
+    environment:
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: password
+##      jboss.socket.binding.port-offset: 100
+#      KEYCLOAK_FRONTEND_URL: http://localhost:8180/auth
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - 9410:9410
+
+
+
+  minio:
+    image: minio/minio
+    command: [ "server", "/data" ]
+    restart: always
+#    volumes:
+#      - "minio_data:/data"
+    ports:
+      - 9000:9000
+      - 9001:9001
+    environment:
+      MINIO_ROOT_USER: webprotege
+      MINIO_ROOT_PASSWORD: webprotege
+
+  webprotege-gwt-api-gateway:
+    image: webprotege-gwt-api-gateway
+    ports:
+      - 7777:7777
+    depends_on:
+      - kafka
+      - keycloak
+      - minio
+    environment:
+      keycloak.jwk-set-uri: http://keycloak:8080
+      spring.kafka.consumer.bootstrap-servers: http://kafka:9092
+      spring.kafka.producer.bootstrap-servers: http://kafka:9092
+      spring.security.oauth2.resourceserver.jwt.issuer-uri: http://keycloak:8080/auth/realms/webprotege
+
+  webprotege-gwt-ui:
+    image: webprotege-gwt-ui
+    depends_on:
+      - webprotege-gwt-api-gateway
+    ports:
+      - 8888:8080
+    environment:
+      minio.access.key: minioadmin
+      minio.access.secret: minioadmin
+      minio.endPoint: http://minio:9000
+      webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
+
+  webprotege-authorization-service:
+    image: webprotege-authorization-service:latest
+    depends_on:
+      - keycloak
+      - mongo
+      - kafka
+    environment:
+      spring.data.mongodb.host: mongo
+      spring.data.mongodb.database: webprotege
+      keycloak.jwk-set-uri: http://keycloak:8080
+      spring.kafka.consumer.bootstrap-servers: kafka:9092
+      spring.kafka.producer.bootstrap-servers: kafka:9092
+
+  webprotege-backend-service:
+    image: webprotege-backend-service:latest
+    depends_on:
+      - mongo
+      - kafka
+    volumes:
+      - webprotege-data-directory:/srv/webprotege
+    environment:
+      webprotege.directories.data: /srv/webprotege
+      spring.kafka.consumer.bootstrap-servers: kafka:9092
+      spring.kafka.producer.bootstrap-servers: kafka:9092
+
+volumes:
+  webprotege-data-directory:
+  mongo-data-directory:
