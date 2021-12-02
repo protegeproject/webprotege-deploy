@@ -32,14 +32,12 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
   keycloak:
-    image: quay.io/keycloak/keycloak
+    image: keycloak/keycloak
     ports:
       - 8080:8080
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: password
-##      jboss.socket.binding.port-offset: 100
-#      KEYCLOAK_FRONTEND_URL: http://localhost:8180/auth
 
   zipkin:
     image: openzipkin/zipkin
@@ -99,6 +97,7 @@ services:
       keycloak.jwk-set-uri: http://keycloak:8080
       spring.kafka.consumer.bootstrap-servers: kafka:9092
       spring.kafka.producer.bootstrap-servers: kafka:9092
+      spring.zipkin.baseUrl: zipkin:9410
 
   webprotege-backend-service:
     image: webprotege-backend-service:latest
@@ -108,6 +107,8 @@ services:
     volumes:
       - webprotege-data-directory:/srv/webprotege
     environment:
+      spring.data.mongodb.host: mongo
+      spring.data.mongodb.database: webprotege
       webprotege.directories.data: /srv/webprotege
       spring.kafka.consumer.bootstrap-servers: kafka:9092
       spring.kafka.producer.bootstrap-servers: kafka:9092
