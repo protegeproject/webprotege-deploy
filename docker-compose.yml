@@ -38,6 +38,8 @@ services:
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: password
+    volumes: 
+      - keycloak-h2-directory:/opt/jboss/keycloak/standalone/data
 
   zipkin:
     image: openzipkin/zipkin
@@ -116,3 +118,4 @@ services:
 volumes:
   webprotege-data-directory:
   mongo-data-directory:
+  keycloak-h2-directory:
