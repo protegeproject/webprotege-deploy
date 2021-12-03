@@ -1,2 +1,2 @@
-# webprotege-docker
-Compose file for WebProtégé services
+# webprotege-deploy
+Deployment files for WebProtégé services
