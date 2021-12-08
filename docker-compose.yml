@@ -52,8 +52,8 @@ services:
     image: minio/minio
     command: [ "server", "/data" ]
     restart: always
-#    volumes:
-#      - "minio_data:/data"
+    volumes:
+     - minio_data:/data
     ports:
       - 9000:9000
       - 9001:9001
@@ -62,7 +62,7 @@ services:
       MINIO_ROOT_PASSWORD: webprotege
 
   webprotege-gwt-api-gateway:
-    image: webprotege-gwt-api-gateway
+    image: webprotege-gwt-api-gateway:0.1.1-SNAPSHOT
     ports:
       - 7777:7777
     depends_on:
@@ -76,7 +76,7 @@ services:
       spring.security.oauth2.resourceserver.jwt.issuer-uri: http://keycloak:8080/auth/realms/webprotege
 
   webprotege-gwt-ui:
-    image: webprotege-gwt-ui
+    image: webprotege-gwt-ui:latest
     depends_on:
       - webprotege-gwt-api-gateway
     ports:
@@ -88,7 +88,7 @@ services:
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
 
   webprotege-authorization-service:
-    image: webprotege-authorization-service:latest
+    image: webprotege-authorization-service:0.1.1-SNAPSHOT
     depends_on:
       - keycloak
       - mongo
@@ -102,7 +102,7 @@ services:
       spring.zipkin.baseUrl: zipkin:9410
 
   webprotege-backend-service:
-    image: webprotege-backend-service:latest
+    image: webprotege-backend-service:0.1.1-SNAPSHOT
     depends_on:
       - mongo
       - kafka
@@ -119,3 +119,4 @@ volumes:
   webprotege-data-directory:
   mongo-data-directory:
   keycloak-h2-directory:
+  minio_data:
