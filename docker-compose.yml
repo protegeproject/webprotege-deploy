@@ -45,7 +45,7 @@ services:
   zipkin:
     image: openzipkin/zipkin
     ports:
-      - 9410:9410
+      - 9411:9411
 
 
 
@@ -70,11 +70,14 @@ services:
       - kafka
       - keycloak
       - minio
+      - zipkin
     environment:
-      keycloak.jwk-set-uri: http://keycloak:8080/auth/realms/webprotege
+      #keycloak.jwk-set-uri: http://keycloak:8080/auth/realms/webprotege
       spring.kafka.consumer.bootstrap-servers: http://kafka:9092
       spring.kafka.producer.bootstrap-servers: http://kafka:9092
+      spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://keycloak:8080/auth/realms/webprotege/protocol/openid-connect/certs
       spring.security.oauth2.resourceserver.jwt.issuer-uri: http://keycloak:8080/auth/realms/webprotege
+      spring.zipkin.baseUrl: http://zipkin:9411
 
   webprotege-gwt-ui:
     image: webprotege-gwt-ui:latest
@@ -94,13 +97,14 @@ services:
       - keycloak
       - mongo
       - kafka
+      - zipkin
     environment:
       spring.data.mongodb.host: mongo
       spring.data.mongodb.database: webprotege
       keycloak.jwk-set-uri: http://keycloak:8080
       spring.kafka.consumer.bootstrap-servers: kafka:9092
       spring.kafka.producer.bootstrap-servers: kafka:9092
-      spring.zipkin.baseUrl: zipkin:9410
+      spring.zipkin.baseUrl: http://zipkin:9411
 
   webprotege-backend-service:
     image: webprotege-backend-service:0.1.1-SNAPSHOT
