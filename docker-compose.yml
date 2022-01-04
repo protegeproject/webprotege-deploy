@@ -27,7 +27,7 @@ services:
       KAFKA_BROKER_ID: 1
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://localhost:29092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://kafka:29092
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
@@ -117,8 +117,7 @@ services:
     depends_on:
       - mongo
       - kafka
-    volumes:
-      - webprotege-data-directory:/srv/webprotege
+      - zipkin
     environment:
       spring.data.mongodb.host: mongo
       spring.data.mongodb.database: webprotege
@@ -128,6 +127,8 @@ services:
       spring.kafka.producer.bootstrap-servers: kafka:9092
       logging.level.org.apache.kafka: warn
       logging.level.org.springframework.kafka: warn
+    volumes:
+      - webprotege-data-directory:/srv/webprotege
 
   nginx:
     image: webprotege-nginx:latest
