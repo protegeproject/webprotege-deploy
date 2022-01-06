@@ -84,7 +84,7 @@ services:
       logging.level.org.springframework.kafka: warn
 
   webprotege-gwt-ui:
-    image: webprotege-gwt-ui:latest
+    image: webprotege-gwt-ui:0.1.1-SNAPSHOT
     depends_on:
       - webprotege-gwt-api-gateway
     # ports:
@@ -113,6 +113,7 @@ services:
       logging.level.org.springframework.kafka: warn
 
   webprotege-backend-service:
+    user: root
     image: webprotege-backend-service:0.1.1-SNAPSHOT
     depends_on:
       - mongo
