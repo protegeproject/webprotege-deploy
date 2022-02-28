@@ -66,7 +66,7 @@ services:
       MINIO_ROOT_PASSWORD: webprotege
 
   webprotege-gwt-api-gateway:
-    image: webprotege-gwt-api-gateway:0.1.1-SNAPSHOT
+    image: protegeproject/webprotege-gwt-api-gateway:0.1.1-SNAPSHOT
     # ports:
       # - 7777:7777
     depends_on:
@@ -84,7 +84,7 @@ services:
       logging.level.org.springframework.kafka: warn
 
   webprotege-gwt-ui:
-    image: webprotege-gwt-ui:0.1.1-SNAPSHOT
+    image: protegeproject/webprotege-gwt-ui:0.1.1-SNAPSHOT
     depends_on:
       - webprotege-gwt-api-gateway
     # ports:
@@ -96,7 +96,7 @@ services:
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
 
   webprotege-authorization-service:
-    image: webprotege-authorization-service:0.1.1-SNAPSHOT
+    image: protegeproject/webprotege-authorization-service:0.1.1-SNAPSHOT
     depends_on:
       - keycloak
       - mongo
@@ -114,7 +114,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: webprotege-backend-service:0.1.1-SNAPSHOT
+    image: protegeproject/webprotege-backend-service:0.1.1-SNAPSHOT
     depends_on:
       - mongo
       - kafka
