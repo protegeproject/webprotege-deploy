@@ -9,29 +9,14 @@ services:
     volumes:
       - mongo-data-directory:/data/db
 
-  zookeeper:
-    image: confluentinc/cp-zookeeper:latest
-    environment:
-      ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+  pulsar:
+    image: apachepulsar/pulsar:2.9.1
     ports:
-      - 2181:2181
-
-  kafka:
-    image: confluentinc/cp-kafka:latest
-    depends_on:
-      - zookeeper
-    ports:
-      - 9092:9092
-    environment:
-      KAFKA_BROKER_ID: 1
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_ADVERTISED_HOST_NAME: kafka
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092,PLAINTEXT_HOST://kafka:29092
-      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
-      KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
-      KAFKA_LOG4J_LOGGERS: "org.apache.zookeeper=ERROR,org.apache.kafka=ERROR, kafka=ERROR, kafka.cluster=ERROR,kafka.controller=ERROR, kafka.coordinator=ERROR,kafka.log=ERROR,kafka.server=ERROR,kafka.zookeeper=ERROR,state.change.logger=ERROR"
+      - 6650:6650
+      - 8080:8080
+    volumes:
+      - pulsardata:/pulsar/data
+      - pulsarconf:/pulsar/conf
 
   keycloak:
     image: jboss/keycloak
@@ -70,18 +55,18 @@ services:
     # ports:
       # - 7777:7777
     depends_on:
-      - kafka
+      - pulsar
       - keycloak
       - minio
       - zipkin
     environment:
-      spring.kafka.consumer.bootstrap-servers: http://kafka:9092
-      spring.kafka.producer.bootstrap-servers: http://kafka:9092
       spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://keycloak:8080/auth/realms/webprotege/protocol/openid-connect/certs
       spring.security.oauth2.resourceserver.jwt.issuer-uri: http://keycloak:8080/auth/realms/webprotege
       spring.zipkin.baseUrl: http://zipkin:9411
-      logging.level.org.apache.kafka: warn
-      logging.level.org.springframework.kafka: warn
+      webprotege.pulsar.serviceHttpUrl: http://localhost:8080
+      webprotege.pulsar.serviceUrl: pulsar://localhost:6650
+      webprotege.pulsar.tenant: webprotege
+      webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
 
   webprotege-gwt-ui:
     image: protegeproject/webprotege-gwt-ui:0.1.1-SNAPSHOT
@@ -100,34 +85,34 @@ services:
     depends_on:
       - keycloak
       - mongo
-      - kafka
+      - pulsar
       - zipkin
     environment:
       spring.data.mongodb.host: mongo
       spring.data.mongodb.database: webprotege
       keycloak.jwk-set-uri: http://keycloak:8080
-      spring.kafka.consumer.bootstrap-servers: kafka:9092
-      spring.kafka.producer.bootstrap-servers: kafka:9092
       spring.zipkin.baseUrl: http://zipkin:9411
-      logging.level.org.apache.kafka: warn
-      logging.level.org.springframework.kafka: warn
+      webprotege.pulsar.serviceHttpUrl: http://localhost:8080
+      webprotege.pulsar.serviceUrl: pulsar://localhost:6650
+      webprotege.pulsar.tenant: webprotege
+      webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
 
   webprotege-backend-service:
     user: root
     image: protegeproject/webprotege-backend-service:0.1.1-SNAPSHOT
     depends_on:
       - mongo
-      - kafka
+      - pulsar
       - zipkin
     environment:
       spring.data.mongodb.host: mongo
       spring.data.mongodb.database: webprotege
       spring.zipkin.baseUrl: http://zipkin:9411
       webprotege.directories.data: /srv/webprotege
-      spring.kafka.consumer.bootstrap-servers: kafka:9092
-      spring.kafka.producer.bootstrap-servers: kafka:9092
-      logging.level.org.apache.kafka: warn
-      logging.level.org.springframework.kafka: warn
+      webprotege.pulsar.serviceHttpUrl: http://localhost:8080
+      webprotege.pulsar.serviceUrl: pulsar://localhost:6650
+      webprotege.pulsar.tenant: webprotege
+      webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
     volumes:
       - webprotege-data-directory:/srv/webprotege
 
