@@ -68,8 +68,8 @@ services:
       webprotege.pulsar.tenant: webprotege
       webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
 
-  webprotege-gwt-ui:
-    image: protegeproject/webprotege-gwt-ui:0.1.1-SNAPSHOT
+  webprotege-gwt-ui-server:
+    image: protegeproject/webprotege-gwt-ui:5.0.0-SNAPSHOT
     depends_on:
       - webprotege-gwt-api-gateway
     # ports:
@@ -81,7 +81,7 @@ services:
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:0.1.1-SNAPSHOT
+    image: protegeproject/webprotege-authorization-service:0.1.2
     depends_on:
       - keycloak
       - mongo
@@ -99,7 +99,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:0.1.1-SNAPSHOT
+    image: protegeproject/webprotege-backend-service:0.1.1
     depends_on:
       - mongo
       - pulsar
