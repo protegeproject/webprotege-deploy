@@ -1,0 +1,135 @@
+version: '2'
+
+services:
+
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data-directory:/data/db
+
+  pulsar:
+    image: apachepulsar/pulsar:2.9.1
+    ports:
+      - 6650:6650
+      - 8080:8080
+    volumes:
+      - pulsardata:/pulsar/data
+      - pulsarconf:/pulsar/conf
+    command: bin/pulsar standalone
+
+  keycloak:
+    image: jboss/keycloak
+    # ports:
+    #   - 8080:8080
+    environment:
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=password
+      - PROXY_ADDRESS_FORWARDING=true
+      - KEYCLOAK_FRONTEND_URL=http://localhost/auth/
+    volumes: 
+      - keycloak-h2-directory:/opt/jboss/keycloak/standalone/data
+
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
+
+
+
+  minio:
+    image: minio/minio
+    command: [ "server", "/data" ]
+    restart: always
+    volumes:
+     - minio_data:/data
+    # ports:
+      # - 9000:9000
+      # - 9001:9001
+    environment:
+      MINIO_ROOT_USER: webprotege
+      MINIO_ROOT_PASSWORD: webprotege
+
+  webprotege-gwt-api-gateway:
+    image: protegeproject/webprotege-gwt-api-gateway:0.1.1-SNAPSHOT
+    # ports:
+      # - 7777:7777
+    depends_on:
+      - pulsar
+      - keycloak
+      - minio
+      - zipkin
+    environment:
+      spring.security.oauth2.resourceserver.jwt.jwk-set-uri: http://keycloak:8080/auth/realms/webprotege/protocol/openid-connect/certs
+      spring.security.oauth2.resourceserver.jwt.issuer-uri: http://keycloak:8080/auth/realms/webprotege
+      spring.zipkin.baseUrl: http://zipkin:9411
+      webprotege.pulsar.serviceHttpUrl: http://pulsar:8080
+      webprotege.pulsar.serviceUrl: pulsar://pulsar:6650
+      webprotege.pulsar.tenant: webprotege
+      webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
+      webprotege.apigateway.forceUserName: jodydoe
+
+  webprotege-gwt-ui-server:
+    image: protegeproject/webprotege-gwt-ui-server:5.0.0-SNAPSHOT
+    depends_on:
+      - webprotege-gwt-api-gateway
+    # ports:
+      # - 8888:8080
+    environment:
+      minio.access.key: minioadmin
+      minio.access.secret: minioadmin
+      minio.endPoint: http://minio:9000
+      webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
+
+  webprotege-authorization-service:
+    image: protegeproject/webprotege-authorization-service:0.1.2
+    depends_on:
+      - keycloak
+      - mongo
+      - pulsar
+      - zipkin
+    environment:
+      spring.data.mongodb.host: mongo
+      spring.data.mongodb.database: webprotege
+      keycloak.jwk-set-uri: http://keycloak:8080
+      spring.zipkin.baseUrl: http://zipkin:9411
+      webprotege.pulsar.serviceHttpUrl: http://pulsar:8080
+      webprotege.pulsar.serviceUrl: pulsar://pulsar:6650
+      webprotege.pulsar.tenant: webprotege
+      webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
+
+  webprotege-backend-service:
+    user: root
+    image: protegeproject/webprotege-backend-service:0.1.1
+    depends_on:
+      - mongo
+      - pulsar
+      - zipkin
+    environment:
+      spring.data.mongodb.host: mongo
+      spring.data.mongodb.database: webprotege
+      spring.zipkin.baseUrl: http://zipkin:9411
+      webprotege.directories.data: /srv/webprotege
+      webprotege.pulsar.serviceHttpUrl: http://pulsar:8080
+      webprotege.pulsar.serviceUrl: pulsar://pulsar:6650
+      webprotege.pulsar.tenant: webprotege
+      webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
+    volumes:
+      - webprotege-data-directory:/srv/webprotege
+
+  nginx:
+    image: protegeproject/webprotege-nginx:latest
+    ports:
+      - 80:80
+    depends_on: 
+      - webprotege-gwt-ui-server
+      - keycloak
+
+volumes:
+  webprotege-data-directory:
+  mongo-data-directory:
+  keycloak-h2-directory:
+  minio_data:
+  pulsardata:
+  pulsarconf:
