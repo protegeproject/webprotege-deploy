@@ -10,7 +10,7 @@ services:
       - mongo-data-directory:/data/db
 
   pulsar:
-    image: apachepulsar/pulsar:2.9.1
+    image: apachepulsar/pulsar:3.1.2
     ports:
       - 6650:6650
       - 8080:8080
@@ -18,6 +18,8 @@ services:
       - pulsardata:/pulsar/data
       - pulsarconf:/pulsar/conf
     command: bin/pulsar standalone
+    environment:
+      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
 
   keycloak:
     image: jboss/keycloak
