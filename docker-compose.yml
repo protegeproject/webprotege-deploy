@@ -69,6 +69,7 @@ services:
       webprotege.pulsar.tenant: webprotege
       webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
       webprotege.apigateway.forceUserName: jodydoe
+      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
 
   webprotege-gwt-ui-server:
     image: protegeproject/webprotege-gwt-ui-server:5.0.0-SNAPSHOT
