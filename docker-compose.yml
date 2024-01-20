@@ -99,6 +99,7 @@ services:
       webprotege.pulsar.serviceUrl: pulsar://pulsar:6650
       webprotege.pulsar.tenant: webprotege
       webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
+      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
 
   webprotege-backend-service:
     user: root
@@ -116,6 +117,7 @@ services:
       webprotege.pulsar.serviceUrl: pulsar://pulsar:6650
       webprotege.pulsar.tenant: webprotege
       webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
+      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
     volumes:
       - webprotege-data-directory:/srv/webprotege
 
