@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: ..\..\Software\kompose.exe convert -f docker-compose-edit.yml
+    kompose.version: 1.26.0 (40646f47)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: zipkin
+  name: zipkin
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: zipkin
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: ..\..\Software\kompose.exe convert -f docker-compose-edit.yml
+        kompose.version: 1.26.0 (40646f47)
+      creationTimestamp: null
+      labels:
+        io.kompose.service: zipkin
+    spec:
+      containers:
+        - image: openzipkin/zipkin
+          name: zipkin
+          ports:
+            - containerPort: 9411
+          resources: {}
+      restartPolicy: Always
+status: {}
