@@ -10,7 +10,7 @@ services:
       - mongo-data-directory:/data/db
 
   pulsar:
-    image: apachepulsar/pulsar:2.9.1
+    image: apachepulsar/pulsar:2.9.5
     ports:
       - 6650:6650
       - 8080:8080
