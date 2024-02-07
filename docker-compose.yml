@@ -17,33 +17,46 @@ services:
     volumes:
       - pulsardata:/pulsar/data
       - pulsarconf:/pulsar/conf
-    command: /pulsar/bin/pulsar standalone
+    command: /pulsar/bin/pulsar standalone  -nss
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/admin/v2/brokers/health"]
       interval: 2s
       timeout: 5s
       retries: 15
 
+  pulsar-admin:
+    image: apachepulsar/pulsar-manager:v0.3.0
+    ports:
+      - "9527:9527"
+      - "7750:7750"
+    environment:
+      - SPRING_CONFIGURATION_FILE=/pulsar-manager/pulsar-manager/application.properties
+    depends_on:
+      pulsar:
+        condition: service_healthy
 
   keycloak:
     image: jboss/keycloak
     ports:
       - 8080:8080
     environment:
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: password
+      #KEYCLOAK_USER: admin
+      #KEYCLOAK_PASSWORD: password
       PROXY_ADDRESS_FORWARDING: true
-#      KEYCLOAK_LOGLEVEL: DEBUG
+      KEYCLOAK_LOGLEVEL: DEBUG
       KEYCLOAK_FRONTEND_URL: http://localhost/auth/
     volumes: 
       - keycloak-h2-directory:/opt/jboss/keycloak/standalone/data
+    healthcheck:
+      test: [ "CMD", "curl", "--fail", "http://localhost:8080/auth/realms/master" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   zipkin:
     image: openzipkin/zipkin
     ports:
       - 9411:9411
-
-
 
   minio:
     image: minio/minio
@@ -83,9 +96,12 @@ services:
       webprotege.apigateway.forceUserName: jodydoe
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:5.0.1-SNAPSHOT
+    image: protegeproject/webprotege-gwt-ui-server:5.0.2-SNAPSHOT
     depends_on:
-      - webprotege-gwt-api-gateway
+      webprotege-gwt-api-gateway:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
     # ports:
       # - 8888:8080
     environment:
@@ -98,7 +114,7 @@ services:
     image: protegeproject/webprotege-authorization-service:0.2.2
     depends_on:
       keycloak:
-        condition: service_started
+        condition: service_healthy
       mongo:
         condition: service_started
       pulsar:
