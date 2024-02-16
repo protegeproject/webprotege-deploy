@@ -78,8 +78,6 @@ services:
         condition: service_started
       minio:
         condition: service_started
-      zipkin:
-        condition: service_started
 
     environment:
       webprotege.pulsar.serviceHttpUrl: http://pulsar:8080
