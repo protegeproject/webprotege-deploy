@@ -13,8 +13,8 @@ services:
     image: apachepulsar/pulsar:2.11.2
     user: root
     ports:
-      - "8080:8080"
       - "6650:6650"
+      - "8081:8080"
     volumes:
       - pulsardata:/pulsar/data
       - pulsarconf:/pulsar/conf
@@ -65,9 +65,6 @@ services:
 
   webprotege-gwt-api-gateway:
     image: protegeproject/webprotege-gwt-api-gateway:0.1.2-SNAPSHOT
-
-    ports:
-      - '5005:5005'
     depends_on:
       pulsar:
         condition: service_healthy
@@ -85,9 +82,7 @@ services:
       webprotege.pulsar.tenant: webprotege
 
       webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+
 
 
   webprotege-gwt-ui-server:
@@ -130,6 +125,8 @@ services:
   webprotege-backend-service:
     user: root
     image: protegeproject/webprotege-backend-service:0.2.0
+    ports:
+      - '5005:5005'
     depends_on:
       mongo:
         condition: service_started
@@ -147,6 +144,9 @@ services:
       webprotege.pulsar.serviceUrl: pulsar://pulsar:6650
       webprotege.pulsar.tenant: webprotege
       webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
+      _JAVA_OPTIONS: >
+        -Xdebug
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
     volumes:
       - webprotege-data-directory:/srv/webprotege
 
