@@ -9,6 +9,13 @@ services:
     volumes:
       - mongo-data-directory:/data/db
 
+  rabbitmq:
+    image: rabbitmq:management
+    restart: no
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
   pulsar:
     image: apachepulsar/pulsar:2.11.2
     user: root
@@ -19,9 +26,16 @@ services:
       - pulsardata:/pulsar/data
       - pulsarconf:/pulsar/conf
     command: /pulsar/bin/pulsar standalone
+    environment:
+      - managedLedgerDefaultEnsembleSize=1
+      - managedLedgerDefaultWriteQuorum=1
+      - managedLedgerDefaultAckQuorum=1
+      - advertisedAddress=pulsar
+      - advertisedListeners=external:pulsar://pulsar:6650
+      - PULSAR_MEM=-Xms512m -Xmx512m -XX:MaxDirectMemorySize=256m
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/admin/v2/brokers/health"]
-      interval: 2s
+      interval: 30s
       timeout: 5s
       retries: 15
     restart: no
