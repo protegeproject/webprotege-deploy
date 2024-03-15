@@ -132,28 +132,7 @@ services:
     volumes:
       - webprotege-data-directory:/srv/webprotege
 
-  webprotege-backend-service2:
-    user: root
-    image: protegeproject/webprotege-backend-service:0.2.0
-    ports:
-      - '5006:5005'
-    depends_on:
-      mongo:
-        condition: service_started
-      zipkin:
-        condition: service_started
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      spring.data.mongodb.host: mongo
-      spring.data.mongodb.database: webprotege
-      spring.zipkin.baseUrl: http://zipkin:9411
-      webprotege.directories.data: /srv/webprotege
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-    volumes:
-      - webprotege-data-directory:/srv/webprotege
+
   nginx:
     image: webprotege-nginx:1.0.0
     hostname: webprotege-local.edu
