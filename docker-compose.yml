@@ -103,6 +103,25 @@ services:
       webprotege.pulsar.command-replies.subscriptionExpiraryTimeMinutes: 5
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
 
+  webprotege-user-management:
+    image: protegeproject/webprotege-user-management:0.0.1-SNAPSHOT
+    ports:
+      - '5006:5006'
+    depends_on:
+      keycloak:
+        condition: service_healthy
+      mongo:
+        condition: service_started
+      zipkin:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      _JAVA_OPTIONS: >
+        -Xdebug
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+
   webprotege-backend-service:
     user: root
     image: protegeproject/webprotege-backend-service:0.1.1
