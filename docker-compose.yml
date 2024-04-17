@@ -11,7 +11,7 @@ services:
 
   rabbitmq:
     image: rabbitmq:management
-    restart: no
+    restart: "no"
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -20,6 +20,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+
 
   keycloak:
     image: jboss/keycloak
@@ -76,6 +77,8 @@ services:
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE: NONE
+      SPRING_RABBITMQ_PUBLISHER_RETURNS: FALSE
 
   webprotege-gwt-ui-server:
     image: protegeproject/webprotege-gwt-ui-server:5.0.2
@@ -94,7 +97,7 @@ services:
       JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:6006
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:0.2.3-SNAPSHOT
+    image: protegeproject/webprotege-authorization-service:1.0.0
     depends_on:
       keycloak:
         condition: service_healthy
@@ -145,7 +148,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:0.2.0
+    image: protegeproject/webprotege-backend-service:1.0.0
     ports:
       - '5005:5005'
     depends_on:
@@ -169,7 +172,7 @@ services:
 
 
   nginx:
-    image: webprotege-nginx:1.0.0
+    image: protegeproject/webprotege-nginx:1.0.0
     hostname: webprotege-local.edu
     ports:
       - 80:80
