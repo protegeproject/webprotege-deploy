@@ -23,13 +23,13 @@ services:
 
 
   keycloak:
-    image: jboss/keycloak
+    image: protegeproject/keycloak
     # ports:
     #   - 8080:8080
     environment:
       KEYCLOAK_USER: admin
       KEYCLOAK_PASSWORD: password
-      PROXY_ADDRESS_FORWARDING: true
+      PROXY_ADDRESS_FORWARDING: "true"
       KEYCLOAK_LOGLEVEL: DEBUG
       KEYCLOAK_FRONTEND_URL: "http://webprotege-local.edu/auth"
       KEYCLOAK_IMPORT: /tmp/webprotege.json
@@ -62,8 +62,7 @@ services:
       MINIO_ROOT_PASSWORD: webprotege
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:0.1.2-SNAPSHOT
-
+    image: protegeproject/webprotege-gwt-api-gateway:1.0.2
     depends_on:
       keycloak:
         condition: service_healthy
@@ -78,26 +77,26 @@ services:
       spring.zipkin.baseUrl: http://zipkin:9411
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE: NONE
-      SPRING_RABBITMQ_PUBLISHER_RETURNS: FALSE
+      SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:5.0.2
+    image: protegeproject/webprotege-gwt-ui-server:5.0.3
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
       keycloak:
         condition: service_healthy
-    ports:
-     - 6006:6006
+    # ports:
+      # - 8888:8080
     environment:
       minio.access.key: minioadmin
       minio.access.secret: minioadmin
       minio.endPoint: http://minio:9000
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
-      JAVA_OPTS: -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:6006
+
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:1.0.0
+    image: protegeproject/webprotege-authorization-service:1.0.1
     depends_on:
       keycloak:
         condition: service_healthy
@@ -148,7 +147,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:1.0.0
+    image: protegeproject/webprotege-backend-service:1.1.0
     ports:
       - '5005:5005'
     depends_on:
