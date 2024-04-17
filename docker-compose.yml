@@ -22,7 +22,7 @@ services:
       retries: 5
 
   keycloak:
-    image: keycloak/keycloak:latest
+    image: jboss/keycloak
     # ports:
     #   - 8080:8080
     environment:
@@ -111,8 +111,8 @@ services:
       spring.zipkin.baseUrl: http://zipkin:9411
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
 
-  webprotege-user-management:
-    image: protegeproject/webprotege-user-management:0.0.1-SNAPSHOT
+  webprotege-user-management-service:
+    image: protegeproject/webprotege-user-management-service:0.0.1-SNAPSHOT
     depends_on:
       keycloak:
         condition: service_healthy
@@ -126,7 +126,7 @@ services:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
 
   webprotege-events-history-service:
-    image: protegeproject/webprotege-events-history:0.0.1-SNAPSHOT
+    image: protegeproject/webprotege-events-history-service:0.0.1-SNAPSHOT
     ports:
       - '5006:5006'
     depends_on:
