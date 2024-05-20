@@ -162,6 +162,9 @@ services:
       spring.data.mongodb.database: webprotege
       spring.zipkin.baseUrl: http://zipkin:9411
       webprotege.directories.data: /srv/webprotege
+      webprotege.minio.access.key: minioadmin
+      webprotege.minio.access.secret: minioadmin
+      webprotege.minio.endPoint: http://minio:9000
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
