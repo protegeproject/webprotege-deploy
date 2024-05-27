@@ -147,7 +147,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:1.1.2
+    image: protegeproject/webprotege-backend-service:1.2.2-SNAPSHOT
     ports:
       - '5005:5005'
     depends_on:
@@ -174,7 +174,7 @@ services:
 
 
   nginx:
-    image: protegeproject/webprotege-nginx:1.0.1
+    image: protegeproject/webprotege-nginx:latest
     hostname: webprotege-local.edu
     ports:
       - 80:80
