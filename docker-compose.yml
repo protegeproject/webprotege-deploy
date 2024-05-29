@@ -158,8 +158,6 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
-      spring.data.mongodb.host: mongo
-      spring.data.mongodb.database: webprotege
       spring.zipkin.baseUrl: http://zipkin:9411
       webprotege.directories.data: /srv/webprotege
       webprotege.minio.access.key: minioadmin
