@@ -147,7 +147,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:1.2.2-SNAPSHOT
+    image: protegeproject/webprotege-backend-service:1.2.3-SNAPSHOT
     ports:
       - '5005:5005'
     depends_on:
