@@ -80,7 +80,7 @@ services:
       SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:5.0.6-WHO
+    image: protegeproject/webprotege-gwt-ui-server:5.0.7-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -147,7 +147,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:1.2.3-SNAPSHOT
+    image: protegeproject/webprotege-backend-service:1.2.3
     ports:
       - '5005:5005'
     depends_on:
