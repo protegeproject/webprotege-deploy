@@ -23,7 +23,7 @@ services:
 
 
   keycloak:
-    image: protegeproject/keycloak
+    image: sleighzy/keycloak
     # ports:
     #   - 8080:8080
     environment:
