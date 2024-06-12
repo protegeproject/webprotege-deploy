@@ -81,20 +81,23 @@ services:
       SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:5.0.6-SNAPSHOT
+    image: protegeproject/webprotege-gwt-ui-server:5.0.7
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
       keycloak:
         condition: service_healthy
-    # ports:
-      # - 8888:8080
+    ports:
+     #- 8888:8080
+     - 6006:6006
     environment:
       minio.access.key: minioadmin
       minio.access.secret: minioadmin
       minio.endPoint: http://minio:9000
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
-
+      _JAVA_OPTIONS: >
+        -Xdebug
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:6006
 
   webprotege-authorization-service:
     image: protegeproject/webprotege-authorization-service:1.0.2
