@@ -50,7 +50,7 @@ services:
 
   minio:
     image: minio/minio
-    command: [ "server", "/data" ]
+    command: [ "server", "/data", "--console-address", ":9001" ]
     restart: always
     volumes:
      - minio_data:/data
@@ -60,10 +60,9 @@ services:
     environment:
       MINIO_ROOT_USER: webprotege
       MINIO_ROOT_PASSWORD: webprotege
-      CONSOLE_ADDRESS: '9000'
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:1.0.3
+    image: protegeproject/webprotege-gwt-api-gateway:1.0.7
     depends_on:
       keycloak:
         condition: service_healthy
@@ -73,15 +72,18 @@ services:
         condition: service_healthy
       zipkin:
         condition: service_started
-
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE: NONE
       SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
+      webprotege.minio.bucketName: "webprotege-uploads"
+      webprotege.minio.accessKey: webprotege
+      webprotege.minio.secretKey: webprotege
+      webprotege.minio.endPoint: http://minio:9000
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:5.0.6-SNAPSHOT
+    image: protegeproject/webprotege-gwt-ui-server:5.0.8
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -146,7 +148,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
 
   webprotege-file-submission-service:
-    image: protegeproject/webprotege-file-submission-service:1.0.2
+    image: protegeproject/webprotege-file-submission-service:1.0.3
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -193,7 +195,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:1.2.2
+    image: protegeproject/webprotege-backend-service:1.3.0
     ports:
       - '5005:5005'
     depends_on:
@@ -218,7 +220,7 @@ services:
 
 
   nginx:
-    image: protegeproject/webprotege-nginx:1.0.4
+    image: protegeproject/webprotege-nginx:1.0.5
     hostname: webprotege-local.edu
     ports:
       - 80:80
