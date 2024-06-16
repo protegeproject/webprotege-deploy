@@ -62,7 +62,7 @@ services:
       MINIO_ROOT_PASSWORD: webprotege
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:1.0.7
+    image: protegeproject/webprotege-gwt-api-gateway:1.0.9
     depends_on:
       keycloak:
         condition: service_healthy
@@ -83,7 +83,7 @@ services:
       webprotege.minio.endPoint: http://minio:9000
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:5.0.8
+    image: protegeproject/webprotege-gwt-ui-server:5.0.12
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -195,7 +195,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:1.3.0
+    image: protegeproject/webprotege-backend-service:1.3.1
     ports:
       - '5005:5005'
     depends_on:
@@ -220,7 +220,7 @@ services:
 
 
   nginx:
-    image: protegeproject/webprotege-nginx:1.0.5
+    image: protegeproject/webprotege-nginx:1.1.0
     hostname: webprotege-local.edu
     ports:
       - 80:80
