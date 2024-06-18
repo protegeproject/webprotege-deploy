@@ -87,7 +87,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:5.0.13
+    image: protegeproject/webprotege-gwt-ui-server:5.0.14-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -185,7 +185,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:1.3.3
+    image: protegeproject/webprotege-backend-service:1.3.4-WHO
     ports:
       - '5005:5005'
     depends_on:
