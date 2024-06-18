@@ -62,7 +62,7 @@ services:
       MINIO_ROOT_PASSWORD: webprotege
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:1.0.9
+    image: protegeproject/webprotege-gwt-api-gateway:1.0.10
     depends_on:
       keycloak:
         condition: service_healthy
@@ -81,6 +81,10 @@ services:
       webprotege.minio.accessKey: webprotege
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
+      spring.servlet.multipart.max-file-size: 200MB
+      spring.servlet.multipart.max-request-size: 200MB
+      webprotege.rabbit.timeout: 600000
+
 
   webprotege-gwt-ui-server:
     image: protegeproject/webprotege-gwt-ui-server:5.0.13
@@ -96,6 +100,7 @@ services:
       minio.access.secret: minioadmin
       minio.endPoint: http://minio:9000
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
+      webprotege.rabbit.timeout: 300000
 
 
   webprotege-authorization-service:
@@ -147,21 +152,6 @@ services:
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
 
-  webprotege-file-submission-service:
-    image: protegeproject/webprotege-file-submission-service:1.0.3
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      minio:
-        condition: service_started
-      zipkin:
-        condition: service_started
-    environment:
-      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
-      webprotege.minio.endPoint: http://minio:9000
-
   webprotege-ontology-processing-service:
     image: protegeproject/webprotege-ontology-processing-service:1.0.0
     depends_on:
@@ -195,7 +185,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:1.3.2
+    image: protegeproject/webprotege-backend-service:1.3.3
     ports:
       - '5005:5005'
     depends_on:
@@ -215,12 +205,13 @@ services:
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      webprotege.rabbit.timeout: 600000
     volumes:
     - webprotege-data-directory:/srv/webprotege
 
 
   nginx:
-    image: protegeproject/webprotege-nginx:1.1.0
+    image: protegeproject/webprotege-nginx:1.2.0
     hostname: webprotege-local.edu
     ports:
       - 80:80
