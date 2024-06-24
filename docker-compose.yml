@@ -23,7 +23,7 @@ services:
 
 
   keycloak:
-    image: protegeproject/keycloak
+    image: protegeproject/keycloak:2.0.0
     # ports:
     #   - 8080:8080
     environment:
@@ -87,7 +87,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:5.0.13
+    image: protegeproject/webprotege-gwt-ui-server:5.0.19-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -102,12 +102,15 @@ services:
       minio.endPoint: http://minio:9000
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.rabbit.timeout: 300000
+      webprotege.fileUploadurl: http://webprotege-local.edu
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:6006
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:1.0.2
+    image: protegeproject/webprotege-authorization-service:1.0.3
+    ports:
+      - 5100:5100
     depends_on:
       keycloak:
         condition: service_healthy
@@ -123,6 +126,9 @@ services:
       keycloak.jwk-set-uri: http://keycloak:8080
       spring.zipkin.baseUrl: http://zipkin:9411
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      _JAVA_OPTIONS: >
+        -Xdebug
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5100
 
   webprotege-user-management-service:
     image: protegeproject/webprotege-user-management-service:1.0.1
@@ -188,7 +194,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:1.3.3
+    image: protegeproject/webprotege-backend-service:1.3.7-WHO
     ports:
       - '5005:5005'
     depends_on:
@@ -214,7 +220,7 @@ services:
 
 
   nginx:
-    image: protegeproject/webprotege-nginx:1.2.0
+    image: protegeproject/webprotege-nginx:1.0.5
     hostname: webprotege-local.edu
     ports:
       - 80:80

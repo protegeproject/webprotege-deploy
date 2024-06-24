@@ -1,0 +1,23 @@
+
+:root {
+  /* Default & hovered link colors */
+  --pf-global--link--Color: #06c;
+  --pf-c-button--m-primary--Color: #03038D;
+}
+
+.login-pf body {
+    height: 100%;
+    background: url("../img/keycloak-bg.svg");
+    background-size: cover;
+}
+
+.logo-image {
+    width: 10%;
+}
+
+.welcome-text {
+    color: #03038D;
+     font-family: "KoHo", sans-serif;
+     font-weight: 400;
+     font-style: normal;
+}
