@@ -357,6 +357,14 @@
           "clientRole": true,
           "containerId": "d99fbcdd-a2bf-4156-be13-bd5cf07039d4",
           "attributes": {}
+        },
+        {
+          "id": "0cd7810b-fabb-4ef3-a61d-64927b005ad4",
+          "name": "RegularProjectEditor",
+          "composite": false,
+          "clientRole": true,
+          "containerId": "d99fbcdd-a2bf-4156-be13-bd5cf07039d4",
+          "attributes": {}
         }
       ],
       "security-admin-console": [],
