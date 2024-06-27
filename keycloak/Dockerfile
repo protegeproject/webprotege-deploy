@@ -1,4 +1,4 @@
-FROM protegeproject/keycloak:2.0.0
+FROM protegeproject/keycloak:latest
 
 EXPOSE 8080
 
