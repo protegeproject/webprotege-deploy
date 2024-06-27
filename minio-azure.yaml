@@ -1,0 +1,38 @@
+identity:
+  userAssignedIdentities:
+    "/subscriptions/74b06a8a-1053-4ac1-bc41-f869cd1ee0b0/resourceGroups/icatx/providers/Microsoft.ManagedIdentity/userAssignedIdentities/alexandru.m.silaghi": {}
+  type: UserAssigned
+properties:
+  environmentId: "/subscriptions/74b06a8a-1053-4ac1-bc41-f869cd1ee0b0/resourceGroups/icatx/providers/Microsoft.App/managedEnvironments/icatx-cont-env"
+  workloadProfileName: webprotege-minio
+  configuration:
+    ingress:
+      external: true
+      targetPort: 9000
+      traffic:
+        - weight: 100
+          revisionName: webprotege-minio-dev
+          label: dev
+
+    maxInactiveRevisions: 1
+  template:
+    containers:
+      - image: minio/minio
+        name: minio
+        volumeMounts:
+          - mountPath: "/data"
+            volumeName: webprotege-minio
+    initContainers:
+      - image: minio/minio
+        name: minioinit
+        resources:
+          cpu: 0.2
+          memory: 100Mi
+        command:
+          - "/bin/sh"
+        args:
+          - "server"
+          - "/data"
+    scale:
+      minReplicas: 1
+      maxReplicas: 1
