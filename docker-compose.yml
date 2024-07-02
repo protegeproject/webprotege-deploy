@@ -62,7 +62,7 @@ services:
       MINIO_ROOT_PASSWORD: webprotege
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:1.0.12
+    image: protegeproject/webprotege-gwt-api-gateway:1.0.13-WHO
     depends_on:
       keycloak:
         condition: service_healthy
@@ -137,6 +137,8 @@ services:
 
   webprotege-user-management-service:
     image: protegeproject/webprotege-user-management-service:1.0.1
+    ports:
+      - '5009:5009'
     depends_on:
       keycloak:
         condition: service_healthy
@@ -148,6 +150,9 @@ services:
         condition: service_healthy
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      _JAVA_OPTIONS: >
+        -Xdebug
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
 
   webprotege-event-history-service:
     image: protegeproject/webprotege-event-history-service:1.0.2
