@@ -92,7 +92,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:6.0.8-WHO
+    image: protegeproject/webprotege-gwt-ui-server:6.0.14-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
