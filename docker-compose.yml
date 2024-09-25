@@ -92,7 +92,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:6.0.14-WHO
+    image: protegeproject/webprotege-gwt-ui-server:6.0.15-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -155,7 +155,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
 
   webprotege-event-history-service:
-    image: protegeproject/webprotege-event-history-service:1.0.3
+    image: protegeproject/webprotege-event-history-service:1.0.4-WHO
     ports:
       - '5006:5006'
     depends_on:
@@ -204,7 +204,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:1.3.17-WHO
+    image: protegeproject/webprotege-backend-service:1.3.19-WHO
     ports:
       - '5005:5005'
     depends_on:
@@ -230,7 +230,7 @@ services:
 
   webprotege-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.2
+    image: protegeproject/webprotege-linearization-service:1.0.6
     ports:
       - '5011:5011'
     depends_on:
