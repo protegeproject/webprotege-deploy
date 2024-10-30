@@ -230,7 +230,7 @@ services:
 
   webprotege-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.8
+    image: protegeproject/webprotege-linearization-service:1.0.9
     ports:
       - '5011:5011'
     depends_on:
