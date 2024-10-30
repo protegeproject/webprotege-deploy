@@ -204,7 +204,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.0.1-WHO
+    image: protegeproject/webprotege-backend-service:2.0.2-WHO
     ports:
       - '5005:5005'
     depends_on:
