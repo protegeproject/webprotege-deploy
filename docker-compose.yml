@@ -155,7 +155,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
 
   webprotege-event-history-service:
-    image: protegeproject/webprotege-event-history-service:2.0.1-WHO
+    image: protegeproject/webprotege-event-history-service:2.0.3-WHO
     ports:
       - '5006:5006'
     depends_on:
@@ -204,7 +204,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.0.2-WHO
+    image: protegeproject/webprotege-backend-service:2.0.7-WHO
     ports:
       - '5005:5005'
     depends_on:
@@ -230,7 +230,7 @@ services:
 
   webprotege-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.9
+    image: protegeproject/webprotege-linearization-service:1.0.10
     ports:
       - '5011:5011'
     depends_on:
@@ -257,7 +257,7 @@ services:
 
   webprotege-postcoordination-service:
     user: root
-    image: protegeproject/webprotege-postcoordination-service:1.0.8
+    image: protegeproject/webprotege-postcoordination-service:1.0.9
     ports:
       - '5012:5012'
     depends_on:
