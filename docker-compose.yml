@@ -113,7 +113,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:1.0.5-WHO
+    image: protegeproject/webprotege-authorization-service:1.0.6-WHO
     ports:
       - '5010:5010'
     depends_on:
@@ -136,7 +136,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
 
   webprotege-user-management-service:
-    image: protegeproject/webprotege-user-management-service:1.0.1
+    image: protegeproject/webprotege-user-management-service:1.0.2
     ports:
       - '5009:5009'
     depends_on:
@@ -155,7 +155,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
 
   webprotege-event-history-service:
-    image: protegeproject/webprotege-event-history-service:2.0.3-WHO
+    image: protegeproject/webprotege-event-history-service:2.0.4-WHO
     ports:
       - '5006:5006'
     depends_on:
@@ -204,7 +204,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.0.7-WHO
+    image: protegeproject/webprotege-backend-service:2.0.9-WHO
     ports:
       - '5005:5005'
     depends_on:
