@@ -204,9 +204,10 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.0.9-WHO
+    image: protegeproject/webprotege-backend-service:2.0.10-WHO
     ports:
-      - '5005:5005'
+      - "5005:5005"  # For remote debugging
+      - "9010:9010"  # For JMX monitoring
     depends_on:
       mongo:
         condition: service_started
@@ -215,18 +216,25 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
-      spring.zipkin.baseUrl: http://zipkin:9411
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
-      webprotege.minio.endPoint: http://minio:9000
-      webprotege.directories.data: /srv/webprotege
+      spring.zipkin.baseUrl: "http://zipkin:9411"
+      webprotege.minio.accessKey: "webprotege"
+      webprotege.minio.secretKey: "webprotege"
+      webprotege.minio.endPoint: "http://minio:9000"
+      webprotege.directories.data: "/srv/webprotege"
+      webprotege.directories.backup : "/webprotege/backup"
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+        -Dcom.sun.management.jmxremote
+        -Dcom.sun.management.jmxremote.port=9010
+        -Dcom.sun.management.jmxremote.authenticate=false
+        -Dcom.sun.management.jmxremote.ssl=false
+      JDK_JAVA_OPTIONS: "--add-opens java.base/sun.net=ALL-UNNAMED"
+      JVM_ENV: -Xms7g -Xmx7g -XX:MaxRAMPercentage=70
       webprotege.rabbit.timeout: 600000
     volumes:
       - webprotege-data-directory:/srv/webprotege
+      - webprotege-backup-directory:/webprotege/backup
 
   webprotege-linearization-service:
     user: root
@@ -282,6 +290,34 @@ services:
       - webprotege-data-directory:/srv/webprotege
 
 
+  icatx-versioning-service:
+    user: root
+    image: protegeproject/icatx-versioning-service:0.0.2
+    ports:
+      - '5013:5013'
+    depends_on:
+      mongo:
+        condition: service_started
+      zipkin:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      spring.zipkin.baseUrl: http://zipkin:9411
+      webprotege.minio.accessKey: webprotege
+      webprotege.minio.secretKey: webprotege
+      webprotege.minio.endPoint: http://minio:9000
+      webprotege.directories.data: /srv/webprotege
+      _JAVA_OPTIONS: >
+        -Xdebug
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5013
+      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      webprotege.rabbit.timeout: 600000
+    volumes:
+      - webprotege-data-directory:/srv/webprotege
+      - webprotege-backup-directory:/webprotege/backup
+
+
   nginx:
     image: protegeproject/webprotege-nginx:1.2.0
     hostname: webprotege-local.edu
@@ -296,3 +332,4 @@ volumes:
   mongo-data-directory:
   keycloak-h2-directory:
   minio_data:
+  webprotege-backup-directory:
