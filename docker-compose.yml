@@ -83,8 +83,8 @@ services:
       webprotege.minio.accessKey: webprotege
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
-      spring.servlet.multipart.max-file-size: 200MB
-      spring.servlet.multipart.max-request-size: 200MB
+      spring.servlet.multipart.max-file-size: 300MB
+      spring.servlet.multipart.max-request-size: 300MB
       webprotege.rabbit.timeout: 600000
       _JAVA_OPTIONS: >
         -Xdebug
@@ -155,7 +155,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
 
   webprotege-event-history-service:
-    image: protegeproject/webprotege-event-history-service:2.0.4-WHO
+    image: protegeproject/webprotege-event-history-service:2.0.5-WHO
     ports:
       - '5006:5006'
     depends_on:
@@ -204,7 +204,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.0.10-WHO
+    image: protegeproject/webprotege-backend-service:2.0.11-WHO
     ports:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
@@ -295,6 +295,34 @@ services:
     image: protegeproject/icatx-versioning-service:0.0.2
     ports:
       - '5013:5013'
+      - '7722:7722'
+    depends_on:
+      mongo:
+        condition: service_started
+      zipkin:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      spring.zipkin.baseUrl: http://zipkin:9411
+      webprotege.minio.accessKey: webprotege
+      webprotege.minio.secretKey: webprotege
+      webprotege.minio.endPoint: http://minio:9000
+      webprotege.directories.data: /srv/webprotege
+      _JAVA_OPTIONS: >
+        -Xdebug
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5013
+      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      webprotege.rabbit.timeout: 600000
+    volumes:
+      - webprotege-data-directory:/srv/webprotege
+      - webprotege-backup-directory:/webprotege/backup
+
+  icatx-api-gateway:
+    user: root
+    image: protegeproject/icatx-api-gateway:0.0.1
+    ports:
+      - '5014:5014'
     depends_on:
       mongo:
         condition: service_started
