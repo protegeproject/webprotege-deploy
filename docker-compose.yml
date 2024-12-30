@@ -136,7 +136,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
 
   webprotege-user-management-service:
-    image: protegeproject/webprotege-user-management-service:1.0.2
+    image: protegeproject/webprotege-user-management-service:1.0.3
     ports:
       - '5009:5009'
     depends_on:
