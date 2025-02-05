@@ -113,7 +113,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:1.0.6-WHO
+    image: protegeproject/webprotege-authorization-service:1.0.7-WHO
     ports:
       - '5010:5010'
     depends_on:
@@ -136,7 +136,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
 
   webprotege-user-management-service:
-    image: protegeproject/webprotege-user-management-service:1.0.3
+    image: protegeproject/webprotege-user-management-service:1.0.4
     ports:
       - '5009:5009'
     depends_on:
@@ -204,7 +204,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.0.14-WHO
+    image: protegeproject/webprotege-backend-service:2.0.17-WHO
     ports:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
@@ -323,7 +323,7 @@ services:
 
   icatx-api-gateway:
     user: root
-    image: protegeproject/icatx-api-gateway:0.0.4
+    image: protegeproject/icatx-api-gateway:0.0.7
     ports:
       - '5014:5014'
       - '7779:7779'
