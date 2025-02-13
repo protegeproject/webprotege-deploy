@@ -92,7 +92,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:7.0.11-WHO
+    image: protegeproject/webprotege-gwt-ui-server:7.0.13-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -238,7 +238,7 @@ services:
 
   webprotege-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.15
+    image: protegeproject/webprotege-linearization-service:1.0.17
     ports:
       - '5011:5011'
     depends_on:
