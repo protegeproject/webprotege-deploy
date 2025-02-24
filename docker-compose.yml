@@ -92,7 +92,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:7.0.13-WHO
+    image: protegeproject/webprotege-gwt-ui-server:7.0.15-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -204,7 +204,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.0.17-WHO
+    image: protegeproject/webprotege-backend-service:2.1.2-WHO
     ports:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
