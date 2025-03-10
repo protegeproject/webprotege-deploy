@@ -155,7 +155,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
 
   webprotege-event-history-service:
-    image: protegeproject/webprotege-event-history-service:2.0.11-WHO
+    image: protegeproject/webprotege-event-history-service:2.0.12-WHO
     ports:
       - '5006:5006'
     depends_on:
