@@ -92,7 +92,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:7.2.0-WHO
+    image: protegeproject/webprotege-gwt-ui-server:7.1.3-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -290,36 +290,36 @@ services:
       - webprotege-data-directory:/srv/webprotege
 
 
-#  icatx-versioning-service:
-#    user: root
-#    image: protegeproject/icatx-versioning-service:0.0.2
-#    ports:
-#      - '5013:5013'
-#      - '7722:7722'
-#    depends_on:
-#      mongo:
-#        condition: service_started
-#      zipkin:
-#        condition: service_started
-#      rabbitmq:
-#        condition: service_healthy
-#    environment:
-#      spring.zipkin.baseUrl: http://zipkin:9411
-#      webprotege.minio.accessKey: webprotege
-#      webprotege.minio.secretKey: webprotege
-#      webprotege.minio.endPoint: http://minio:9000
-#      webprotege.directories.data: /srv/webprotege
-#      webprotege.directories.backup: /webprotege/backup
-#      webprotege.versioning.location: /srv/versioning/
-#      _JAVA_OPTIONS: >
-#        -Xdebug
-#        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5013
-#      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-#      webprotege.rabbit.timeout: 600000
-#    volumes:
-#      - webprotege-data-directory:/srv/webprotege
-#      - webprotege-backup-directory:/webprotege/backup
-#      - webprotege-versioning-directory:/srv/versioning/
+  icatx-versioning-service:
+    user: root
+    image: protegeproject/icatx-versioning-service:0.0.2
+    ports:
+      - '5013:5013'
+      - '7722:7722'
+    depends_on:
+      mongo:
+        condition: service_started
+      zipkin:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      spring.zipkin.baseUrl: http://zipkin:9411
+      webprotege.minio.accessKey: webprotege
+      webprotege.minio.secretKey: webprotege
+      webprotege.minio.endPoint: http://minio:9000
+      webprotege.directories.data: /srv/webprotege
+      webprotege.directories.backup: /webprotege/backup
+      webprotege.versioning.location: /srv/versioning/
+      _JAVA_OPTIONS: >
+        -Xdebug
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5013
+      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      webprotege.rabbit.timeout: 600000
+    volumes:
+      - webprotege-data-directory:/srv/webprotege
+      - webprotege-backup-directory:/webprotege/backup
+      - webprotege-versioning-directory:/srv/versioning/
 
   icatx-api-gateway:
     user: root
