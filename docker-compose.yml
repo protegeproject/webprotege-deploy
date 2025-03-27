@@ -23,7 +23,8 @@ services:
 
 
   keycloak:
-    image: webprotege-keycloak:0.0.2
+    image: keycloak/keycloak:26.1
+    command: [ "start-dev" ]
     ports:
       - 8080:8080
     depends_on:
@@ -34,15 +35,6 @@ services:
       - KEYCLOAK_ADMIN_PASSWORD=password
       - KC_PROXY=edge
       - KC_LOG_LEVEL=DEBUG
-      - KK_TO_RMQ_USERNAME=guest
-      - KK_TO_RMQ_PASSWORD=guest
-      - KK_TO_RMQ_VHOST=/
-      - KK_TO_RMQ_URL=rabbitmq
-      - KK_TO_RMQ_EXCHANGE=webprotege-event-exchange
-   #   - KC_IMPORT=/tmp/webprotege.json
-      #- KC_HOSTNAME=http://webprotege-local.edu  # ✅ Must be a full URL
-      #- KC_HOSTNAME_URL=http://webprotege-local.edu  # ✅ Consistent full URL
-     # - KC_HOSTNAME_ADMIN=http://webprotege-local.edu  # ✅ Matches hostname
       - KC_HTTP_RELATIVE_PATH=/keycloak-admin
       - KC_FEATURES=hostname
     volumes:
