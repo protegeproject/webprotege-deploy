@@ -92,7 +92,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:7.2.3-WHO
+    image: protegeproject/webprotege-gwt-ui-server:7.2.6-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -113,7 +113,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:1.0.6-WHO
+    image: protegeproject/webprotege-authorization-service:1.0.7-WHO
     ports:
       - '5010:5010'
     depends_on:
@@ -136,7 +136,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
 
   webprotege-user-management-service:
-    image: protegeproject/webprotege-user-management-service:1.0.3
+    image: protegeproject/webprotege-user-management-service:1.0.4
     ports:
       - '5009:5009'
     depends_on:
@@ -155,7 +155,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
 
   webprotege-event-history-service:
-    image: protegeproject/webprotege-event-history-service:2.0.10-WHO
+    image: protegeproject/webprotege-event-history-service:2.0.12-WHO
     ports:
       - '5006:5006'
     depends_on:
@@ -204,7 +204,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.2.1-WHO
+    image: protegeproject/webprotege-backend-service:2.2.4-WHO
     ports:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
@@ -238,7 +238,7 @@ services:
 
   webprotege-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.15
+    image: protegeproject/webprotege-linearization-service:1.0.18
     ports:
       - '5011:5011'
     depends_on:
@@ -265,7 +265,7 @@ services:
 
   webprotege-postcoordination-service:
     user: root
-    image: protegeproject/webprotege-postcoordination-service:1.0.14
+    image: protegeproject/webprotege-postcoordination-service:1.0.16
     ports:
       - '5012:5012'
     depends_on:
@@ -323,7 +323,7 @@ services:
 
   icatx-api-gateway:
     user: root
-    image: protegeproject/icatx-api-gateway:0.0.4
+    image: protegeproject/icatx-api-gateway:0.0.8
     ports:
       - '5014:5014'
       - '7779:7779'
