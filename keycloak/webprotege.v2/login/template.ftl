@@ -45,8 +45,7 @@
          <div style="text-transform: none;" id="kc-header-wrapper"
               class="${properties.kcHeaderWrapperClass!}">
 
-
-                <img class="logo-image" src="${url.resourcesPath}/img/webprotege_logo.svg" alt="Webprotege logo">
+                <img id="webprotege-logo-image" class="logo-image" src="${url.resourcesPath}/img/webprotege_logo.svg" alt="Webprotege logo">
 
                 <div class="welcome-text">WELCOME TO iCAT-X</div>
 
