@@ -23,27 +23,22 @@ services:
 
 
   keycloak:
-    image: webprotege-keycloak:0.0.1
-    command: [ "start-dev" ]
-    ports:
-      - 8080:8080
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
+    image: protegeproject/keycloak
+    # ports:
+    #   - 8080:8080
     environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=password
-      - KC_PROXY=edge
-      - KC_LOG_LEVEL=DEBUG
-      - KC_HTTP_RELATIVE_PATH=/keycloak-admin
-      - KC_FEATURES=hostname
-      - KC_THEME=webprotege
-      - KC_THEME_LOGIN=webprotege
+      KEYCLOAK_USER: admin
+      KEYCLOAK_PASSWORD: password
+      PROXY_ADDRESS_FORWARDING: "true"
+      KEYCLOAK_LOGLEVEL: DEBUG
+      KEYCLOAK_FRONTEND_URL: "http://webprotege-local.edu/auth"
+      KEYCLOAK_IMPORT: /tmp/webprotege.json
+      KEYCLOAK_HOSTNAME_ADMIN_URL: "http://webprotege-local.edu/auth"
     volumes:
-      - keycloak-h2-directory:/opt/keycloak/data
-      - ./keycloak/webprotege.v2:/opt/keycloak/themes/webprotege.v2
+      - keycloak-h2-directory:/opt/jboss/keycloak/standalone/data
+      - ./keycloak:/tmp
     healthcheck:
-      test: [ "CMD", "/opt/keycloak/bin/kc.sh", "show-config" ]
+      test: [ "CMD", "curl", "--fail", "http://localhost:8080/auth/realms/master" ]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -97,7 +92,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:7.2.7-WHO
+    image: protegeproject/webprotege-gwt-ui-server:7.2.6-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -209,7 +204,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.2.3-WHO
+    image: protegeproject/webprotege-backend-service:2.2.4-WHO
     ports:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
@@ -243,7 +238,7 @@ services:
 
   webprotege-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.17
+    image: protegeproject/webprotege-linearization-service:1.0.18
     ports:
       - '5011:5011'
     depends_on:
@@ -294,7 +289,7 @@ services:
     volumes:
       - webprotege-data-directory:/srv/webprotege
 
-
+#
 #  icatx-versioning-service:
 #    user: root
 #    image: protegeproject/icatx-versioning-service:0.0.2
@@ -328,7 +323,7 @@ services:
 
   icatx-api-gateway:
     user: root
-    image: protegeproject/icatx-api-gateway:0.0.7
+    image: protegeproject/icatx-api-gateway:0.0.8
     ports:
       - '5014:5014'
       - '7779:7779'
@@ -356,7 +351,7 @@ services:
 
 
   nginx:
-    image: protegeproject/webprotege-nginx:1.2.1
+    image: protegeproject/webprotege-nginx:1.2.0
     hostname: webprotege-local.edu
     ports:
       - 80:80
