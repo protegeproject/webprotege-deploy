@@ -142,7 +142,7 @@ services:
       LOGGING_LEVEL_ROOT: INFO
       spring.zipkin.baseUrl: http://zipkin:9411
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      keycloak_issuer-url: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege/protocol/openid-connect/certs
+      KEYCLOAK_ISSUER_URL: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege/protocol/openid-connect/certs
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
