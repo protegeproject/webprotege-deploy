@@ -92,6 +92,7 @@ services:
       webprotege.minio.endPoint: http://minio:9000
       spring.servlet.multipart.max-file-size: 300MB
       spring.servlet.multipart.max-request-size: 300MB
+      WEBPROTEGE_ALLOWEDORIGIN: http://icatx.northeurope.cloudapp.azure.com
       webprotege.rabbit.timeout: 600000
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
