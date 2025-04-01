@@ -34,7 +34,7 @@ services:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=password
       - KC_PROXY=edge
-      - KC_LOG_LEVEL=DEBUG
+      - KC_LOG_LEVEL=INFO
       - KC_HTTP_RELATIVE_PATH=/keycloak-admin
       - KC_FEATURES=hostname
       - KC_THEME=webprotege
@@ -357,7 +357,7 @@ services:
 
   nginx:
     image: protegeproject/webprotege-nginx:1.2.1
-    hostname: webprotege-local.edu
+    hostname: icatx.northeurope.cloudapp.azure.com
     ports:
       - 80:80
     depends_on:
