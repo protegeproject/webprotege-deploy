@@ -91,11 +91,11 @@ services:
       spring.servlet.multipart.max-file-size: 300MB
       spring.servlet.multipart.max-request-size: 300MB
       webprotege.rabbit.timeout: 600000
-      spring.security.oauth2.client.provider.keycloak.issuer-uri: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
-      spring.security.oauth2.resourceserver.jwt.issuer-uri: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
+      KEYCLOAK_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
+      KEYCLOAK_RESOURCESERVER_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
       _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
+          -Xdebug
+          -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
 
 
   webprotege-gwt-ui-server:
@@ -139,7 +139,7 @@ services:
       keycloak.jwk-set-uri: http://keycloak:8080
       spring.zipkin.baseUrl: http://zipkin:9411
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      keycloak-issuer-url: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege/protocol/openid-connect/certs
+      KEYCLOAK_ISSUER_URL: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege/protocol/openid-connect/certs
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
