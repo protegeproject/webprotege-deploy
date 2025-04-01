@@ -81,6 +81,7 @@ services:
       - '5008:5008'
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
+      LOGGING_LEVEL_ROOT: INFO
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE: NONE
       SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
@@ -91,8 +92,8 @@ services:
       spring.servlet.multipart.max-file-size: 300MB
       spring.servlet.multipart.max-request-size: 300MB
       webprotege.rabbit.timeout: 600000
-      KEYCLOAK_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
-      KEYCLOAK_RESOURCESERVER_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
       _JAVA_OPTIONS: >
           -Xdebug
           -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
@@ -112,7 +113,7 @@ services:
       minio.access.secret: minioadmin
       minio.endPoint: http://minio:9000
       KEYCLOAK_AUTH_URL: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/
-      webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
+      WEBPROTEGE_GWT_API_GATEWAY_ENDPOINT: http://webprotege-gwt-api-gateway:7777
       webprotege.rabbit.timeout: 300000
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       _JAVA_OPTIONS: >
@@ -137,6 +138,7 @@ services:
       spring.data.mongodb.host: mongo
       spring.data.mongodb.database: webprotege
       keycloak.jwk-set-uri: http://keycloak:8080
+      LOGGING_LEVEL_ROOT: INFO
       spring.zipkin.baseUrl: http://zipkin:9411
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       keycloak_issuer-url: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege/protocol/openid-connect/certs
@@ -159,6 +161,7 @@ services:
         condition: service_healthy
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      LOGGING_LEVEL_ROOT: INFO
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
@@ -176,6 +179,7 @@ services:
         condition: service_healthy
     environment:
       webprotege.keycloak.serverUrl: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin
+      LOGGING_LEVEL_ROOT: INFO
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       _JAVA_OPTIONS: >
         -Xdebug
@@ -192,6 +196,7 @@ services:
         condition: service_started
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      LOGGING_LEVEL_ROOT: INFO
       webprotege.minio.accessKey: webprotege
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
@@ -232,6 +237,7 @@ services:
       webprotege.minio.endPoint: "http://minio:9000"
       webprotege.directories.data: "/srv/webprotege"
       webprotege.directories.backup : "/webprotege/backup"
+      LOGGING_LEVEL_ROOT: INFO
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
