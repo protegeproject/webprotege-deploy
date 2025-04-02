@@ -171,6 +171,8 @@ services:
     environment:
       webprotege.keycloak.serverUrl: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin
       LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_MONGODB_CORE_MONGOTEMPLATE: INFO
+      LOGGING_LEVEL_ORG_MONGODB_DRIVER: INFO
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
 
