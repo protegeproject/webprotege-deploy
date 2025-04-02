@@ -2,13 +2,6 @@ version: '3'
 
 services:
 
-  mongo:
-    image: mongo
-    ports:
-      - 27017:27017
-    volumes:
-      - mongo-data-directory:/data/db
-
   rabbitmq:
     image: rabbitmq:management
     restart: "no"
@@ -241,6 +234,7 @@ services:
       webprotege.minio.endPoint: "http://minio:9000"
       webprotege.directories.data: "/srv/webprotege"
       webprotege.directories.backup : "/webprotege/backup"
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       LOGGING_LEVEL_ROOT: INFO
       _JAVA_OPTIONS: >
         -Xdebug
@@ -274,6 +268,7 @@ services:
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5011
@@ -301,6 +296,7 @@ services:
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5012
@@ -330,6 +326,7 @@ services:
 #      webprotege.minio.endPoint: http://minio:9000
 #      webprotege.directories.data: /srv/webprotege
 #      webprotege.directories.backup: /webprotege/backup
+#      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
 #      webprotege.versioning.location: /srv/versioning/
 #      _JAVA_OPTIONS: >
 #        -Xdebug
@@ -360,6 +357,7 @@ services:
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5014
