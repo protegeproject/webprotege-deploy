@@ -133,6 +133,7 @@ services:
       keycloak.jwk-set-uri: http://keycloak:8080
       LOGGING_LEVEL_ROOT: INFO
       spring.zipkin.baseUrl: http://zipkin:9411
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       KEYCLOAK_ISSUER_URL: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege/protocol/openid-connect/certs
       _JAVA_OPTIONS: >
