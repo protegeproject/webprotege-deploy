@@ -125,15 +125,11 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
         condition: service_healthy
     environment:
-      spring.data.mongodb.host: mongo
-      spring.data.mongodb.database: webprotege
       keycloak.jwk-set-uri: http://keycloak:8080
       LOGGING_LEVEL_ROOT: INFO
       spring.zipkin.baseUrl: http://zipkin:9411
@@ -150,8 +146,6 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
@@ -168,8 +162,6 @@ services:
     ports:
       - '5006:5006'
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
@@ -221,8 +213,6 @@ services:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
@@ -256,8 +246,6 @@ services:
     ports:
       - '5011:5011'
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
@@ -284,8 +272,6 @@ services:
     ports:
       - '5012:5012'
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
@@ -345,8 +331,6 @@ services:
       - '5014:5014'
       - '7779:7779'
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
@@ -379,7 +363,6 @@ services:
 
 volumes:
   webprotege-data-directory:
-  mongo-data-directory:
   keycloak-h2-directory:
   minio_data:
   webprotege-backup-directory:
