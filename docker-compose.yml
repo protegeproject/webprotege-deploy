@@ -154,6 +154,8 @@ services:
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       LOGGING_LEVEL_ROOT: INFO
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
+
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
@@ -171,6 +173,8 @@ services:
       webprotege.keycloak.serverUrl: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin
       LOGGING_LEVEL_ROOT: INFO
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
+
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
