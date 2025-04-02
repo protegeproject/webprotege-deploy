@@ -153,9 +153,8 @@ services:
         condition: service_healthy
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      LOGGING_LEVEL_ROOT: INFO
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
-
+      LOGGING_LEVEL_ROOT: INFO
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
