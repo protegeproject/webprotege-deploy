@@ -111,6 +111,10 @@ services:
       WEBPROTEGE_GWT_API_GATEWAY_ENDPOINT: http://webprotege-gwt-api-gateway:7777
       webprotege_gwt_api_gateway_endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
+      webprotege.websocketUrl: wss://icatx.northeurope.cloudapp.azure.com/wsapps
+      webprotege.logoutUrl: http://icatx.northeurope.cloudapp.azure.com/webprotege/logout
+      webprotege.fileUploadurl: http://icatx.northeurope.cloudapp.azure.com
+      webprotege.keycloakLogoutUrl: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege/protocol/openid-connect/logout
       webprotege.rabbit.timeout: 300000
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       _JAVA_OPTIONS: >
