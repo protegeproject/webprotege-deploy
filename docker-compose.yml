@@ -361,7 +361,7 @@ services:
 
 
   nginx:
-    image: protegeproject/webprotege-nginx:1.2.1
+    image: protegeproject/webprotege-nginx:1.2.2
     hostname: icatx.northeurope.cloudapp.azure.com
     ports:
       - 80:80
