@@ -85,10 +85,10 @@ services:
       webprotege.minio.endPoint: http://minio:9000
       spring.servlet.multipart.max-file-size: 300MB
       spring.servlet.multipart.max-request-size: 300MB
-      WEBPROTEGE_ALLOWEDORIGIN: http://icatx.northeurope.cloudapp.azure.com
+      WEBPROTEGE_ALLOWEDORIGIN: http://${SERVER_HOST}
       webprotege.rabbit.timeout: 600000
-      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
       _JAVA_OPTIONS: >
           -Xdebug
           -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
@@ -107,14 +107,14 @@ services:
       minio.access.key: minioadmin
       minio.access.secret: minioadmin
       minio.endPoint: http://minio:9000
-      KEYCLOAK_AUTH_URL: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/
+      KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak-admin/
       WEBPROTEGE_GWT_API_GATEWAY_ENDPOINT: http://webprotege-gwt-api-gateway:7777
       webprotege_gwt_api_gateway_endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
-      webprotege.websocketUrl: wss://icatx.northeurope.cloudapp.azure.com/wsapps
-      webprotege.logoutUrl: http://icatx.northeurope.cloudapp.azure.com/webprotege/logout
-      webprotege.fileUploadurl: http://icatx.northeurope.cloudapp.azure.com
-      webprotege.keycloakLogoutUrl: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege/protocol/openid-connect/logout
+      webprotege.websocketUrl: wss://${SERVER_HOST}/wsapps
+      webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
+      webprotege.fileUploadurl: http://${SERVER_HOST}
+      webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
       webprotege.rabbit.timeout: 300000
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       _JAVA_OPTIONS: >
@@ -134,12 +134,11 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
-      keycloak.jwk-set-uri: http://keycloak:8080
       LOGGING_LEVEL_ROOT: INFO
       spring.zipkin.baseUrl: http://zipkin:9411
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      KEYCLOAK_ISSUER_URL: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege/protocol/openid-connect/certs
+      KEYCLOAK_ISSUER_URL: ${JWK_SET_URI}
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
@@ -173,7 +172,7 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
-      webprotege.keycloak.serverUrl: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin
+      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
       LOGGING_LEVEL_ROOT: INFO
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_MONGODB_CORE_MONGOTEMPLATE: INFO
       LOGGING_LEVEL_ORG_MONGODB_DRIVER: INFO
@@ -349,8 +348,8 @@ services:
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
-      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://icatx.northeurope.cloudapp.azure.com/keycloak-admin/realms/webprotege
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${ISSUER_URI}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: ${JWK_SET_URI}
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: >
         -Xdebug
@@ -364,7 +363,7 @@ services:
 
   nginx:
     image: protegeproject/webprotege-nginx:1.2.2
-    hostname: icatx.northeurope.cloudapp.azure.com
+    hostname: ${SERVER_HOST}
     ports:
       - 80:80
     depends_on:
