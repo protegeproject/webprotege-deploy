@@ -157,6 +157,7 @@ services:
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
+      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
       LOGGING_LEVEL_ROOT: INFO
       _JAVA_OPTIONS: >
         -Xdebug
