@@ -353,8 +353,7 @@ services:
       webprotege.directories.data: /srv/webprotege
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${ISSUER_URI}
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: ${JWK_SET_URI}
-      spring.security.oauth2.client.provider.keycloak.issuer-uri: ${KEYCLOAK_WEBPROTEGE_URL}
-      spring.security.oauth2.resourceserver.jwt.issuer-uri: ${KEYCLOAK_WEBPROTEGE_URL}
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER-URI: ${ISSUER_URI}
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: >
         -Xdebug
