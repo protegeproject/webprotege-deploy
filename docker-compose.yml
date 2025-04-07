@@ -16,14 +16,14 @@ services:
       - "5672:5672"
       - "15672:15672"
     healthcheck:
-      test: ["CMD", "rabbitmqctl", "status"]
+      test: [ "CMD", "rabbitmqctl", "status" ]
       interval: 30s
       timeout: 10s
       retries: 5
 
 
   keycloak:
-    image: keycloak/keycloak:26.1
+    image: webprotege-keycloak:0.0.1
     command: [ "start-dev" ]
     ports:
       - 8080:8080
@@ -37,9 +37,11 @@ services:
       - KC_LOG_LEVEL=DEBUG
       - KC_HTTP_RELATIVE_PATH=/keycloak-admin
       - KC_FEATURES=hostname
+      - KC_THEME=webprotege
+      - KC_THEME_LOGIN=webprotege
     volumes:
       - keycloak-h2-directory:/opt/keycloak/data
-      - ./keycloak:/tmp
+      - ./keycloak/webprotege.v2:/opt/keycloak/themes/webprotege.v2
     healthcheck:
       test: [ "CMD", "/opt/keycloak/bin/kc.sh", "show-config" ]
       interval: 30s
