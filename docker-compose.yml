@@ -23,18 +23,14 @@ services:
 
 
   keycloak:
-    image: webprotege-keycloak:0.0.1
-    command: [ "start-dev" ]
-    ports:
-      - 8080:8080
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
+    image: protegeproject/keycloak
+    # ports:
+    #   - 8080:8080
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=password
       - KC_PROXY=edge
-      - KC_LOG_LEVEL=DEBUG
+      - KC_LOG_LEVEL=INFO
       - KC_HTTP_RELATIVE_PATH=/keycloak-admin
       - KC_FEATURES=hostname
       - KC_THEME=webprotege
@@ -79,8 +75,10 @@ services:
         condition: service_started
     ports:
       - '5008:5008'
+      - '7777:7777'
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
+      LOGGING_LEVEL_ROOT: INFO
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE: NONE
       SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
@@ -90,10 +88,13 @@ services:
       webprotege.minio.endPoint: http://minio:9000
       spring.servlet.multipart.max-file-size: 300MB
       spring.servlet.multipart.max-request-size: 300MB
+      WEBPROTEGE_ALLOWEDORIGIN: http://${SERVER_HOST}
       webprotege.rabbit.timeout: 600000
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
       _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
+          -Xdebug
+          -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
 
 
   webprotege-gwt-ui-server:
@@ -109,7 +110,12 @@ services:
       minio.access.key: minioadmin
       minio.access.secret: minioadmin
       minio.endPoint: http://minio:9000
+      KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak-admin/
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
+      webprotege.websocketUrl: wss://${SERVER_HOST}/wsapps
+      webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
+      webprotege.fileUploadurl: http://${SERVER_HOST}
+      webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
       webprotege.rabbit.timeout: 300000
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       _JAVA_OPTIONS: >
@@ -124,37 +130,38 @@ services:
     depends_on:
       keycloak:
         condition: service_healthy
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
         condition: service_healthy
     environment:
-      spring.data.mongodb.host: mongo
-      spring.data.mongodb.database: webprotege
-      keycloak.jwk-set-uri: http://keycloak:8080
+      LOGGING_LEVEL_ROOT: INFO
       spring.zipkin.baseUrl: http://zipkin:9411
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      KEYCLOAK_ISSUER_URL: ${JWK_SET_URI}
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
 
   webprotege-user-management-service:
-    image: protegeproject/webprotege-user-management-service:1.0.4
+    image: protegeproject/webprotege-user-management-service:1.0.5
     ports:
       - '5009:5009'
     depends_on:
       keycloak:
         condition: service_healthy
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
         condition: service_healthy
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
+      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
+      webprotege.keycloak.clientSecret: ${ADMIN_CLI_SECRET}
+      webprotege.keycloak.clientId: admin-cli
+      LOGGING_LEVEL_ROOT: INFO
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
@@ -164,14 +171,18 @@ services:
     ports:
       - '5006:5006'
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
         condition: service_healthy
     environment:
+      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_MONGODB_CORE_MONGOTEMPLATE: INFO
+      LOGGING_LEVEL_ORG_MONGODB_DRIVER: INFO
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
+
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
@@ -187,6 +198,7 @@ services:
         condition: service_started
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      LOGGING_LEVEL_ROOT: INFO
       webprotege.minio.accessKey: webprotege
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
@@ -214,8 +226,6 @@ services:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
@@ -227,6 +237,8 @@ services:
       webprotege.minio.endPoint: "http://minio:9000"
       webprotege.directories.data: "/srv/webprotege"
       webprotege.directories.backup : "/webprotege/backup"
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
+      LOGGING_LEVEL_ROOT: INFO
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
@@ -247,8 +259,6 @@ services:
     ports:
       - '5011:5011'
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
@@ -259,6 +269,7 @@ services:
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5011
@@ -274,8 +285,6 @@ services:
     ports:
       - '5012:5012'
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
@@ -286,6 +295,7 @@ services:
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5012
@@ -302,8 +312,6 @@ services:
       - '5013:5013'
       - '7722:7722'
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
@@ -315,6 +323,7 @@ services:
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
       webprotege.directories.backup: /webprotege/backup
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       webprotege.versioning.location: /srv/versioning/
       _JAVA_OPTIONS: >
         -Xdebug
@@ -333,8 +342,6 @@ services:
       - '5014:5014'
       - '7779:7779'
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
@@ -345,6 +352,10 @@ services:
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${ISSUER_URI}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: ${JWK_SET_URI}
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER-URI: ${ISSUER_URI}
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5014
@@ -356,8 +367,8 @@ services:
 
 
   nginx:
-    image: protegeproject/webprotege-nginx:1.2.1
-    hostname: webprotege-local.edu
+    image: protegeproject/webprotege-nginx:1.2.2
+    hostname: ${SERVER_HOST}
     ports:
       - 80:80
     depends_on:
@@ -365,6 +376,7 @@ services:
       - keycloak
 
 volumes:
+
   webprotege-data-directory:
   mongo-data-directory:
   keycloak-h2-directory:
