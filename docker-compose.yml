@@ -2,6 +2,13 @@ version: '3'
 
 services:
 
+  mongo:
+    image: mongo
+    ports:
+      - 27017:27017
+    volumes:
+      - mongo-data-directory:/data/db
+
   rabbitmq:
     image: rabbitmq:management
     restart: "no"
@@ -108,8 +115,6 @@ services:
       minio.access.secret: minioadmin
       minio.endPoint: http://minio:9000
       KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak-admin/
-      WEBPROTEGE_GWT_API_GATEWAY_ENDPOINT: http://webprotege-gwt-api-gateway:7777
-      webprotege_gwt_api_gateway_endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.websocketUrl: wss://${SERVER_HOST}/wsapps
       webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
@@ -249,7 +254,7 @@ services:
       JVM_ENV: -Xms7g -Xmx7g -XX:MaxRAMPercentage=70
       webprotege.rabbit.timeout: 600000
     volumes:
-      - /srv/webprotege:/srv/webprotege
+      - webprotege-data-directory:/srv/webprotege
       - webprotege-backup-directory:/webprotege/backup
 
   webprotege-linearization-service:
@@ -330,9 +335,9 @@ services:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       webprotege.rabbit.timeout: 600000
     volumes:
-      - /srv/webprotege:/srv/webprotege
-      - /webprotege/backup:/webprotege/backup
-      - /srv/versioning/:/srv/versioning/
+      - webprotege-data-directory:/srv/webprotege
+      - webprotege-backup-directory:/webprotege/backup
+      - webprotege-versioning-directory:/srv/versioning/
 
   icatx-api-gateway:
     user: root
@@ -375,7 +380,9 @@ services:
       - keycloak
 
 volumes:
+
   webprotege-data-directory:
+  mongo-data-directory:
   keycloak-h2-directory:
   minio_data:
   webprotege-backup-directory:
