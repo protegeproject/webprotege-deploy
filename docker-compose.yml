@@ -295,7 +295,7 @@ services:
 
   icatx-versioning-service:
     user: root
-    image: protegeproject/icatx-versioning-service:0.0.2
+    image: protegeproject/icatx-versioning-service:0.0.3
     ports:
       - '5013:5013'
       - '7722:7722'
@@ -326,7 +326,7 @@ services:
 
   icatx-api-gateway:
     user: root
-    image: protegeproject/icatx-api-gateway:0.0.8
+    image: protegeproject/icatx-api-gateway:0.0.9
     ports:
       - '5014:5014'
       - '7779:7779'
