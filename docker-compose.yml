@@ -23,13 +23,9 @@ services:
 
 
   keycloak:
-    image: alexsilaghi93/webprotege-keycloak:0.0.1
-    command: [ "start-dev" ]
-    ports:
-      - 8080:8080
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
+    image: protegeproject/keycloak
+    # ports:
+    #   - 8080:8080
     environment:
       - KEYCLOAK_ADMIN=admin
       - KEYCLOAK_ADMIN_PASSWORD=password
