@@ -9,8 +9,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
+      - name: Checkout default branch
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Ensure all branches are fetched
+
+      - name: Checkout target branch
+        run: |
+          BRANCH="${{ github.event.client_payload.branch }}"
+          echo "Checking out branch: $BRANCH"
+
+          # Check if branch exists locally or remotely
+          if git ls-remote --exit-code --heads origin "$BRANCH"; then
+            git checkout "$BRANCH"
+          else
+            echo "Branch '$BRANCH' does not exist. Exiting."
+            exit 1
+          fi
 
       - name: Update docker-compose image tag
         run: |
@@ -20,10 +35,8 @@ jobs:
 
           echo "Updating service '$SERVICE' to version '$VERSION' in $FILE"
 
-          # Update the version for the correct service
           sed -i "s|\(image: protegeproject/$SERVICE:\)[^[:space:]]*|\1$VERSION|" "$FILE"
 
-          echo "Updated line(s):"
           grep "image: protegeproject/$SERVICE" "$FILE" || echo "No matching image line found."
 
       - name: Commit and push changes
@@ -33,4 +46,4 @@ jobs:
 
           git add docker-compose.yml
           git commit -m "chore: bump ${{ github.event.client_payload.service }} to ${{ github.event.client_payload.version }}"
-          git push
+          git push origin HEAD
