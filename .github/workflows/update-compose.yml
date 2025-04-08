@@ -1,0 +1,36 @@
+name: Update Compose File
+
+on:
+  repository_dispatch:
+    types: [update_compose]
+
+jobs:
+  update-compose:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Update docker-compose image tag
+        run: |
+          SERVICE="${{ github.event.client_payload.service }}"
+          VERSION="${{ github.event.client_payload.version }}"
+          FILE=docker-compose.yml
+
+          echo "Updating service '$SERVICE' to version '$VERSION' in $FILE"
+
+          # Update the version for the correct service
+          sed -i "s|\(image: protegeproject/$SERVICE:\)[^[:space:]]*|\1$VERSION|" "$FILE"
+
+          echo "Updated line(s):"
+          grep "image: protegeproject/$SERVICE" "$FILE" || echo "No matching image line found."
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "who-icatx-bot"
+          git config user.email "who-icatx-bot@users.noreply.github.com"
+
+          git add docker-compose.yml
+          git commit -m "chore: bump ${{ github.event.client_payload.service }} to ${{ github.event.client_payload.version }}"
+          git push
