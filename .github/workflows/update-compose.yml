@@ -1,42 +1,41 @@
 name: Update Compose File
 
 on:
-  repository_dispatch:
-    types: [update_compose]
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
 
 jobs:
   update-compose:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout default branch
+      - name: Checkout target branch
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensure all branches are fetched
-
-      - name: Checkout target branch
-        run: |
-          BRANCH="${{ github.event.client_payload.branch }}"
-          echo "Checking out branch: $BRANCH"
-
-          # Check if branch exists locally or remotely
-          if git ls-remote --exit-code --heads origin "$BRANCH"; then
-            git checkout "$BRANCH"
-          else
-            echo "Branch '$BRANCH' does not exist. Exiting."
-            exit 1
-          fi
+          fetch-depth: 0
+          ref: ${{ inputs.branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update docker-compose image tag
         run: |
-          SERVICE="${{ github.event.client_payload.service }}"
-          VERSION="${{ github.event.client_payload.version }}"
+          SERVICE="${{ inputs.service }}"
+          VERSION="${{ inputs.version }}"
           FILE=docker-compose.yml
 
           echo "Updating service '$SERVICE' to version '$VERSION' in $FILE"
 
           sed -i "s|\(image: protegeproject/$SERVICE:\)[^[:space:]]*|\1$VERSION|" "$FILE"
 
+          echo "Result:"
           grep "image: protegeproject/$SERVICE" "$FILE" || echo "No matching image line found."
 
       - name: Commit and push changes
@@ -45,5 +44,5 @@ jobs:
           git config user.email "who-icatx-bot@users.noreply.github.com"
 
           git add docker-compose.yml
-          git commit -m "chore: bump ${{ github.event.client_payload.service }} to ${{ github.event.client_payload.version }}"
-          git push origin HEAD
+          git commit -m "chore: bump ${{ inputs.service }} to ${{ inputs.version }}"
+          git push origin ${{ inputs.branch }}
