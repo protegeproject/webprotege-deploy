@@ -1,8 +1,17 @@
 name: Update Compose File
 
 on:
-  repository_dispatch:
-    types: [update-compose]  # Custom event type
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
 
 jobs:
   update-compose:
@@ -13,14 +22,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ github.event.client_payload.branch }}  # Using payload from the dispatch event
+          ref: ${{ inputs.branch }}  # Use the input parameter 'branch'
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update docker-compose image tag
         id: update-compose
         run: |
-          SERVICE="${{ github.event.client_payload.service }}"  # Using service from the dispatch payload
-          VERSION="${{ github.event.client_payload.version }}"  # Using version from the dispatch payload
+          SERVICE="${{ inputs.service }}"  # Use the input parameter 'service'
+          VERSION="${{ inputs.version }}"  # Use the input parameter 'version'
           FILE=docker-compose.yml
 
           echo "Updating service '$SERVICE' to version '$VERSION' in $FILE"
@@ -50,5 +59,5 @@ jobs:
           git config user.email "webprotege@users.noreply.github.com"
 
           git add docker-compose.yml
-          git commit -m "chore: bump ${{ github.event.client_payload.service }} to ${{ github.event.client_payload.version }}"
-          git push origin ${{ github.event.client_payload.branch }}
+          git commit -m "chore: bump ${{ inputs.service }} to ${{ inputs.version }}"
+          git push origin ${{ inputs.branch }}
