@@ -370,6 +370,7 @@ services:
     hostname: ${SERVER_HOST}
     ports:
       - 80:80
+      - 443:433
     depends_on:
       - webprotege-gwt-ui-server
       - keycloak
