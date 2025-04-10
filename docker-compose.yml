@@ -95,7 +95,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: alexsilaghi93/webprotege-gwt-ui:1.0.96
+    image: protegeproject/webprotege-gwt-ui-server:7.2.14-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
