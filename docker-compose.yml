@@ -111,7 +111,7 @@ services:
       WEBPROTEGE_GWT_API_GATEWAY_ENDPOINT: http://webprotege-gwt-api-gateway:7777
       webprotege_gwt_api_gateway_endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
-      webprotege.websocketUrl: ${{WEBSOCKET_URL}}
+      webprotege.websocketUrl: ${WEBSOCKET_URL}
       webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
       webprotege.fileUploadurl: http://${SERVER_HOST}
       webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
