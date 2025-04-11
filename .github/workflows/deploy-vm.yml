@@ -1,10 +1,21 @@
 name: Deploy Updated Service to Azure VM
 
 on:
-  workflow_run:
-    workflows: ["Update Compose File"]
-    types:
-      - completed
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+    secrets:
+      AZURE_VM_USER:
+        required: true
+      AZURE_VM_HOST:
+        required: true
+      AZURE_VM_SSH_KEY:
+        required: true
 
 jobs:
   deploy:
@@ -21,13 +32,13 @@ jobs:
 
       - name: Deploy updated service on Azure VM
         run: |
-          SERVICE=${{ steps.get-outputs.outputs.service }}
-          VERSION=${{ steps.get-outputs.outputs.version }}
+          SERVICE=${{ inputs.service }}
+          VERSION=${{ inputs.version }}
           BRANCH="${{ github.event.workflow_run.head_branch }}"
 
           ssh ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "
             set -e
-            cd /path/to/your/project
+            cd /home/azureuser/webprotege/webprotege-deploy/
 
             echo 'Checking out branch: $BRANCH'
             git fetch origin $BRANCH
