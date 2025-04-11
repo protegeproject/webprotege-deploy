@@ -35,7 +35,7 @@ jobs:
         run: |
           SERVICE=${{ inputs.service }}
           VERSION=${{ inputs.version }}
-          BRANCH="${{ inputs.branch }}"
+          BRANCH="icatx-qa"
 
           ssh ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "
             set -e
