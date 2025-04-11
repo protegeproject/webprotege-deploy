@@ -81,3 +81,14 @@ jobs:
         run: |
           echo "service=${{ inputs.service }}" >> $GITHUB_OUTPUT
           echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+
+  notify-deploy:
+    needs: update-compose
+    uses: ./.github/workflows/deploy-vm.yaml
+    with:
+      version: ${{ inputs.version }}
+      service: ${{ inputs.service }}
+    secrets:
+      AZURE_VM_USER: ${{ secrets.AZURE_VM_USER }}
+      AZURE_VM_HOST: ${{ secrets.AZURE_VM_HOST }}
+      AZURE_VM_SSH_KEY: ${{ secrets.AZURE_VM_SSH_KEY }}
