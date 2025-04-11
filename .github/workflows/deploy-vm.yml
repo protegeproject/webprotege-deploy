@@ -39,10 +39,10 @@ jobs:
             cd /home/azureuser/webprotege/webprotege-deploy/
 
             echo 'Checking out branch: $BRANCH'
-            git fetch origin $BRANCH
-            git checkout $BRANCH
-            git pull origin $BRANCH
+            sudo git fetch origin $BRANCH
+            sudo git checkout $BRANCH
+            sudo git pull origin $BRANCH
 
             echo 'Rebuilding service: \$SERVICE'
-            docker compose up -d --no-deps --build \$SERVICE
+            sudo docker compose up -d --no-deps --build \$SERVICE
           "
