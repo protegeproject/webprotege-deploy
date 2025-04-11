@@ -40,6 +40,12 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Print inputs for debugging
+        run: |
+          echo "Service: ${{ github.event.inputs.service }}"
+          echo "Version: ${{ github.event.inputs.version }}"
+          echo "Branch: ${{ github.event.inputs.branch }}"
+
       - name: Update docker-compose image tag
         id: update-compose
         run: |
@@ -79,11 +85,12 @@ jobs:
       - name: Set service/version outputs
         id: set-vars
         run: |
-          echo "service=${{ inputs.service }}" >> $GITHUB_OUTPUT
-          echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT
+          echo "service=${{ github.event.inputs.service }}" >> $GITHUB_OUTPUT
+          echo "version=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
 
   notify-deploy:
     needs: update-compose
+    if: ${{ needs.update-compose.outputs.changed == 'true' }}  # Ensures it only runs if changed is true
     uses: ./.github/workflows/deploy-vm.yml
     with:
       version: ${{ inputs.version }}
