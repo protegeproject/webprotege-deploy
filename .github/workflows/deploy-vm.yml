@@ -25,15 +25,15 @@ jobs:
           VERSION=${{ steps.get-outputs.outputs.version }}
           BRANCH="${{ github.event.workflow_run.head_branch }}"
 
-          ssh ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} <<EOF
+          ssh ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "
             set -e
-            cd /home/azureuser/webprotege/webprotege-deploy/
+            cd /path/to/your/project
 
-            echo "Checking out branch: $BRANCH"
+            echo 'Checking out branch: $BRANCH'
             git fetch origin $BRANCH
             git checkout $BRANCH
             git pull origin $BRANCH
 
-            echo "Rebuilding service: \$SERVICE"
+            echo 'Rebuilding service: \$SERVICE'
             docker compose up -d --no-deps --build \$SERVICE
-  EOF
+          "
