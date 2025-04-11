@@ -90,7 +90,6 @@ jobs:
 
   notify-deploy:
     needs: update-compose
-    if: ${{ needs.update-compose.outputs.changed == 'true' }}  # Ensures it only runs if changed is true
     uses: ./.github/workflows/deploy-vm.yml
     with:
       version: ${{ inputs.version }}
