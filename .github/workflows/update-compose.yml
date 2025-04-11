@@ -1,0 +1,83 @@
+name: Update Compose File
+
+on:
+  workflow_dispatch:
+    inputs:
+      service:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
+
+  workflow_call:
+    inputs:
+      service:
+        required: true
+        type: string
+      version:
+        required: true
+        type: string
+      branch:
+        required: true
+        type: string
+
+jobs:
+  update-compose:
+    runs-on: ubuntu-latest
+    outputs:
+      service: ${{ steps.set-vars.outputs.service }}
+      version: ${{ steps.set-vars.outputs.version }}
+
+    steps:
+      - name: Checkout target branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.inputs.branch }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Update docker-compose image tag
+        id: update-compose
+        run: |
+          SERVICE="${{ github.event.inputs.service }}"  # Use the input parameter 'service'
+          VERSION="${{ github.event.inputs.version }}"  # Use the input parameter 'version'
+          FILE=docker-compose.yml
+
+          echo "Updating service '$SERVICE' to version '$VERSION' in $FILE"
+
+          # Save the original file checksum
+          cp "$FILE" "$FILE.bak"
+
+          # Attempt to update the image line
+          sed -i "s|\(image: protegeproject/$SERVICE:\)[^[:space:]]*|\1$VERSION|" "$FILE"
+
+          echo "Result:"
+          grep "image: protegeproject/$SERVICE" "$FILE" || echo "No matching image line found."
+
+          # Check if the file was actually changed
+          if cmp -s "$FILE" "$FILE.bak"; then
+            echo "No change made to docker-compose.yml."
+            echo "changed=false" >> $GITHUB_OUTPUT
+          else
+            echo "docker-compose.yml updated."
+            echo "changed=true" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit and push changes
+        if: steps.update-compose.outputs.changed == 'true'
+        run: |
+          git config user.name "webprotege-bot"
+          git config user.email "webprotege@users.noreply.github.com"
+
+          git add docker-compose.yml
+          git commit -m "chore: bump ${{ github.event.inputs.service }} to ${{ github.event.inputs.version }}"
+          git push origin ${{ github.event.inputs.branch }}
+      - name: Set service/version outputs
+        id: set-vars
+        run: |
+          echo "service=${{ inputs.service }}" >> $GITHUB_OUTPUT
+          echo "version=${{ inputs.version }}" >> $GITHUB_OUTPUT

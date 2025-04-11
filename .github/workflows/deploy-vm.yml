@@ -1,0 +1,39 @@
+name: Deploy Updated Service to Azure VM
+
+on:
+  workflow_run:
+    workflows: ["Update Compose File"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.AZURE_VM_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.AZURE_VM_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy updated service on Azure VM
+        run: |
+          SERVICE=${{ steps.get-outputs.outputs.service }}
+          VERSION=${{ steps.get-outputs.outputs.version }}
+          BRANCH="${{ github.event.workflow_run.head_branch }}"
+
+          ssh ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} <<EOF
+            set -e
+            cd /home/azureuser/webprotege/webprotege-deploy/
+
+            echo "Checking out branch: $BRANCH"
+            git fetch origin $BRANCH
+            git checkout $BRANCH
+            git pull origin $BRANCH
+
+            echo "Rebuilding service: \$SERVICE"
+            docker compose up -d --no-deps --build \$SERVICE
+  EOF
