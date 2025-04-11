@@ -40,11 +40,13 @@ jobs:
           ssh ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "
             set -e
             cd /home/azureuser/webprotege/webprotege-deploy/
-
+          
+            ssh -T git@github.com
+          
             echo 'Checking out branch: $BRANCH'
-            sudo git fetch origin $BRANCH
-            sudo git checkout $BRANCH
-            sudo git pull origin $BRANCH
+            git fetch origin $BRANCH
+            git checkout $BRANCH
+            git pull origin $BRANCH
 
             echo 'Rebuilding service: \$SERVICE'
             sudo docker compose up -d --no-deps --build \$SERVICE
