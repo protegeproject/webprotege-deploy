@@ -84,7 +84,7 @@ jobs:
 
   notify-deploy:
     needs: update-compose
-    uses: ./.github/workflows/deploy-vm.yaml
+    uses: .github/workflows/deploy-vm.yaml
     with:
       version: ${{ inputs.version }}
       service: ${{ inputs.service }}
