@@ -94,6 +94,7 @@ jobs:
     with:
       version: ${{ inputs.version }}
       service: ${{ inputs.service }}
+      branch:  ${{ github.event.workflow_run.head_branch }}
     secrets:
       AZURE_VM_USER: ${{ secrets.AZURE_VM_USER }}
       AZURE_VM_HOST: ${{ secrets.AZURE_VM_HOST }}

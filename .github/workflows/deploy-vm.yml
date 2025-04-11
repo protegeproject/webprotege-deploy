@@ -9,6 +9,9 @@ on:
       version:
         required: true
         type: string
+      branch:
+        required: true
+        type: string
     secrets:
       AZURE_VM_USER:
         required: true
@@ -32,7 +35,7 @@ jobs:
         run: |
           SERVICE=${{ inputs.service }}
           VERSION=${{ inputs.version }}
-          BRANCH="${{ github.event.workflow_run.head_branch }}"
+          BRANCH="${{ inputs.branch }}"
 
           ssh ${{ secrets.AZURE_VM_USER }}@${{ secrets.AZURE_VM_HOST }} "
             set -e
