@@ -102,7 +102,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:7.2.12-WHO
+    image: protegeproject/webprotege-gwt-ui-server:7.2.15-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -259,7 +259,7 @@ services:
 
   webprotege-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.18
+    image: protegeproject/webprotege-linearization-service:1.0.19
     ports:
       - '5011:5011'
     depends_on:
@@ -341,7 +341,7 @@ services:
 
   icatx-api-gateway:
     user: root
-    image: protegeproject/icatx-api-gateway:0.0.9
+    image: protegeproject/icatx-api-gateway:0.0.61
     ports:
       - '5014:5014'
       - '7779:7779'
