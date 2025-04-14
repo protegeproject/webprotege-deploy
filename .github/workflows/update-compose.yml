@@ -72,21 +72,35 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit and push changes
+      - name: Commit changes to a new branch
         if: steps.update-compose.outputs.changed == 'true'
-        env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          
+          BRANCH_NAME="update-compose-branch-${{ github.sha }}"
+
+          # Create a new branch from the target branch (e.g., main or a custom branch)
+          git checkout -b "$BRANCH_NAME"
+
+          # Set commit identity
           git config user.name "protegeproject-botApp"
           git config user.email "protegeproject-botApp@users.noreply.github.com"
 
-
+          # Add and commit the changes
           git add docker-compose.yml
           git commit -m "chore: bump ${{ github.event.inputs.service }} to ${{ github.event.inputs.version }}"
 
-          # Push using the GitHub App token
-          git push https://x-access-token:${TOKEN}@github.com/${{ github.repository }} HEAD:${{ github.event.inputs.branch }}
+          # Push the new branch to GitHub
+          git push https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }} "$BRANCH_NAME"
+
+      - name: Create a pull request
+        if: steps.update-compose.outputs.changed == 'true'
+        uses: peter-evans/create-pull-request@v4
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          title: "chore: bump ${{ github.event.inputs.service }} to ${{ github.event.inputs.version }}"
+          body: "Automated PR to bump the version of the ${{ github.event.inputs.service }}."
+          head: ${{ github.actor }}:update-compose-branch-${{ github.sha }}
+          base: main
+
 
       - name: Set service/version outputs
         id: set-vars
