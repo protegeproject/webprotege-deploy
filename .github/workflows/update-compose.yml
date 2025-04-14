@@ -37,6 +37,14 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - uses: actions/create-github-app-token@v1
+        name: Generate GitHub token
+        id: app-token
+        with:
+          app-id: ${{ vars.PROTEGEPROJECT_BOT_APP_ID }}
+          private-key: ${{ secrets.PROTEGEPROJECT_BOT_APP_PRIVATE_KEY }}
+
+
       - name: Update docker-compose image tag
         id: update-compose
         run: |
@@ -66,13 +74,18 @@ jobs:
 
       - name: Commit and push changes
         if: steps.update-compose.outputs.changed == 'true'
+        env:
+          TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
-          git config user.name "webprotege-bot"
-          git config user.email "webprotege@users.noreply.github.com"
+          git config user.name "WebProtege Automation"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add docker-compose.yml
           git commit -m "chore: bump ${{ github.event.inputs.service }} to ${{ github.event.inputs.version }}"
-          git push origin ${{ github.event.inputs.branch }}
+
+          # Push using the GitHub App token
+          git push https://x-access-token:${TOKEN}@github.com/${{ github.repository }} HEAD:${{ github.event.inputs.branch }}
+
       - name: Set service/version outputs
         id: set-vars
         run: |
