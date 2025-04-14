@@ -77,6 +77,11 @@ jobs:
         env:
           TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
+          
+          git config user.name "protegeproject-botApp"
+          git config user.email "protegeproject-botApp@users.noreply.github.com"
+
+
           git add docker-compose.yml
           git commit -m "chore: bump ${{ github.event.inputs.service }} to ${{ github.event.inputs.version }}"
 
