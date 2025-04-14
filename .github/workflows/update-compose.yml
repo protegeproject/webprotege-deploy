@@ -71,19 +71,24 @@ jobs:
             echo "docker-compose.yml updated."
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
-
+      - name: Set up SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.WEBPROTEGE_BUMP_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan github.com >> ~/.ssh/known_hosts
+          
       - name: Commit and push changes
-        env:
-          TOKEN: ${{ steps.app-token.outputs.token }}
         if: steps.update-compose.outputs.changed == 'true'
         run: |
-          git remote set-url --push origin https://protegeproject-bot:$TOKEN@github.com/protegeproject/webprotege-deploy.git
           git config user.name "webprotege-bot"
           git config user.email "webprotege@users.noreply.github.com"
-
+          
           git add docker-compose.yml
           git commit -m "chore: bump ${{ github.event.inputs.service }} to ${{ github.event.inputs.version }}"
-          git push origin ${{ github.event.inputs.branch }}    
+          
+          git remote set-url origin git@github.com:protegeproject/webprotege-deploy.git
+          git push origin ${{ github.event.inputs.branch }}
       
 
       - name: Set service/version outputs
