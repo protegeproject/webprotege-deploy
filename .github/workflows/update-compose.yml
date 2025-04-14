@@ -37,13 +37,13 @@ jobs:
           ref: ${{ github.event.inputs.branch }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
+
       - uses: actions/create-github-app-token@v1
         name: Generate GitHub token
         id: app-token
         with:
           app-id: ${{ vars.PROTEGEPROJECT_BOT_APP_ID }}
           private-key: ${{ secrets.PROTEGEPROJECT_BOT_APP_PRIVATE_KEY }}
-
 
       - name: Update docker-compose image tag
         id: update-compose
@@ -72,35 +72,19 @@ jobs:
             echo "changed=true" >> $GITHUB_OUTPUT
           fi
 
-      - name: Commit changes to a new branch
+      - name: Commit and push changes
+        env:
+          TOKEN: ${{ steps.app-token.outputs.token }}
         if: steps.update-compose.outputs.changed == 'true'
         run: |
-          BRANCH_NAME="update-compose-branch-${{ github.sha }}"
+          git remote set-url --push origin https://protegeproject-bot:$TOKEN@github.com/protegeproject/webprotege-deploy.git
+          git config user.name "webprotege-bot"
+          git config user.email "webprotege@users.noreply.github.com"
 
-          # Create a new branch from the target branch (e.g., main or a custom branch)
-          git checkout -b "$BRANCH_NAME"
-
-          # Set commit identity
-          git config user.name "protegeproject-botApp"
-          git config user.email "protegeproject-botApp@users.noreply.github.com"
-
-          # Add and commit the changes
           git add docker-compose.yml
           git commit -m "chore: bump ${{ github.event.inputs.service }} to ${{ github.event.inputs.version }}"
-
-          # Push the new branch to GitHub
-          git push https://x-access-token:${{ steps.app-token.outputs.token }}@github.com/${{ github.repository }} "$BRANCH_NAME"
-
-      - name: Create a pull request
-        if: steps.update-compose.outputs.changed == 'true'
-        uses: peter-evans/create-pull-request@v7
-        with:
-          token: ${{ steps.app-token.outputs.token }}
-          title: "chore: bump ${{ github.event.inputs.service }} to ${{ github.event.inputs.version }}"
-          body: "Automated PR to bump the version of the ${{ github.event.inputs.service }}."
-          head: ${{ github.actor }}:update-compose-branch-${{ github.sha }}
-          base: main
-
+          git push origin ${{ github.event.inputs.branch }}    
+      
 
       - name: Set service/version outputs
         id: set-vars
