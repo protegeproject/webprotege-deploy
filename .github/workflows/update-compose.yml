@@ -97,7 +97,7 @@ jobs:
         with:
           token: ${{ steps.app-token.outputs.token }}
           title: "chore: bump ${{ github.event.inputs.service }} to ${{ github.event.inputs.version }}"
-          body: "Automated PR to bump the version of the " + ${{ inputs.service }} + "."
+          body: "Automated PR to bump the version of the ${{ github.event.inputs.service }}."
           head: ${{ github.actor }}:update-compose-branch-${{ github.sha }}
           base: main
 
