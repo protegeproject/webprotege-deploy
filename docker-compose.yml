@@ -129,7 +129,7 @@ services:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
 
   webprotege-user-management-service:
-    image: protegeproject/webprotege-user-management-service:1.0.4
+    image: protegeproject/webprotege-user-management-service:1.0.7
     depends_on:
       keycloak:
         condition: service_healthy
