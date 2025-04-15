@@ -328,6 +328,7 @@ services:
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER-URI: ${ISSUER_URI}
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       webprotege.versioning.location: /srv/versioning/
+      LOGGER_LEVEL_ROOT: INFO
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5013
