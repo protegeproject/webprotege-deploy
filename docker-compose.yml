@@ -365,7 +365,7 @@ services:
       - webprotege-data-directory:/srv/webprotege
       - webprotege-backup-directory:/webprotege/backup
 
-  icatx-identity-generation:
+  icatx-id-generation-service:
     image: protegeproject/icatx-id-generation-service:0.0.1
     depends_on:
       rabbitmq:
