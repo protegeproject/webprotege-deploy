@@ -365,6 +365,19 @@ services:
       - webprotege-data-directory:/srv/webprotege
       - webprotege-backup-directory:/webprotege/backup
 
+  icatx-identity-generation:
+    image: protegeproject/icatx-id-generation-service:0.0.1
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    environment:
+      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      LOGGING_LEVEL_ROOT: INFO
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${ISSUER_URI}
+      spring.security.oauth2.resourceserver.jwt.issuer-uri: ${ISSUER_URI}
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: ${JWK_SET_URI}
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER-URI: ${ISSUER_URI}
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
 
   nginx:
     image: protegeproject/webprotege-nginx:1.2.2
