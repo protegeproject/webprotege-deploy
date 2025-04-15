@@ -123,7 +123,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:1.0.8-WHO
+    image: protegeproject/webprotege-authorization-service:1.0.10-WHO
     ports:
       - '5010:5010'
     depends_on:
@@ -336,7 +336,7 @@ services:
 
   icatx-api-gateway:
     user: root
-    image: protegeproject/icatx-api-gateway:0.0.60
+    image: protegeproject/icatx-api-gateway:0.0.61
     ports:
       - '5014:5014'
       - '7779:7779'
