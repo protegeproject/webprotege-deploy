@@ -316,6 +316,7 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
+      SSH_PRIVATE_KEY: ${SSH_PRIVATE_KEY}
       spring.zipkin.baseUrl: http://zipkin:9411
       webprotege.minio.accessKey: webprotege
       webprotege.minio.secretKey: webprotege
