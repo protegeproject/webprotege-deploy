@@ -166,7 +166,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
 
   webprotege-event-history-service:
-    image: protegeproject/webprotege-event-history-service:2.0.12-WHO
+    image: protegeproject/webprotege-event-history-service:2.0.13-WHO
     ports:
       - '5006:5006'
     depends_on:
@@ -220,7 +220,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.2.4-WHO
+    image: protegeproject/webprotege-backend-service:2.2.7-WHO
     ports:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
@@ -254,7 +254,7 @@ services:
 
   webprotege-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.18
+    image: protegeproject/webprotege-linearization-service:1.0.20
     ports:
       - '5011:5011'
     depends_on:
