@@ -322,6 +322,7 @@ services:
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
       webprotege.directories.backup: /webprotege/backup
+      webprotege.versioning.jsonFileLocation: /srv/versioning/
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${ISSUER_URI}
       spring.security.oauth2.resourceserver.jwt.issuer-uri: ${ISSUER_URI}
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: ${JWK_SET_URI}
@@ -360,6 +361,7 @@ services:
       spring.security.oauth2.resourceserver.jwt.issuer-uri: ${ISSUER_URI}
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: ${JWK_SET_URI}
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER-URI: ${ISSUER_URI}
+      LOGGER_LEVEL_ROOT: INFO
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: >
         -Xdebug
