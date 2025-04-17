@@ -187,7 +187,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
 
   webprotege-ontology-processing-service:
-    image: protegeproject/webprotege-ontology-processing-service:1.0.1-WHO
+    image: protegeproject/webprotege-ontology-processing-service:1.0.0
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -204,7 +204,7 @@ services:
 
 
   webprotege-initial-revision-history-service:
-    image: protegeproject/webprotege-initial-revision-history-service:1.0.5-WHO
+    image: protegeproject/webprotege-initial-revision-history-service:1.0.0
     depends_on:
       rabbitmq:
         condition: service_healthy
