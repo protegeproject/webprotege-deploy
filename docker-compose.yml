@@ -102,6 +102,7 @@ services:
       minio.access.key: minioadmin
       minio.access.secret: minioadmin
       minio.endPoint: http://minio:9000
+      KEYCLOAK_AUTH_URL: http://webprotege-local.edu/keycloak-admin
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.rabbit.timeout: 300000
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
@@ -160,7 +161,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
 
   webprotege-ontology-processing-service:
-    image: protegeproject/webprotege-ontology-processing-service:1.0.2
+    image: protegeproject/webprotege-ontology-processing-service:1.0.0
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -176,7 +177,7 @@ services:
 
 
   webprotege-initial-revision-history-service:
-    image: protegeproject/webprotege-initial-revision-history-service:1.0.4
+    image: protegeproject/webprotege-initial-revision-history-service:1.0.0
     depends_on:
       rabbitmq:
         condition: service_healthy
