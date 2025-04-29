@@ -149,7 +149,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
 
   webprotege-user-management-service:
-    image: protegeproject/webprotege-user-management-service:1.0.8-WHO
+    image: protegeproject/webprotege-user-management-service:1.0.9
     ports:
       - '5009:5009'
     depends_on:
@@ -164,7 +164,7 @@ services:
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
       webprotege.keycloak.clientSecret: ${ADMIN_CLI_SECRET}
-      webprotege.keycloak.clientId: admin-cli
+      webprotege.keycloak.clientId: user-management
       LOGGING_LEVEL_ROOT: INFO
       _JAVA_OPTIONS: >
         -Xdebug
