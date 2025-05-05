@@ -75,7 +75,7 @@ services:
       - elk
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:2.0.6
+    image: protegeproject/webprotege-gwt-api-gateway:2.0.7
     ports:
       - '5008:5008'
     depends_on:
@@ -143,7 +143,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:2.0.1
+    image: protegeproject/webprotege-authorization-service:2.0.2
     ports:
       - '5010:5010'
     depends_on:
@@ -173,7 +173,7 @@ services:
       - elk
 
   webprotege-user-management-service:
-    image: protegeproject/webprotege-user-management-service:1.0.9
+    image: protegeproject/webprotege-user-management-service:1.0.10
     depends_on:
       keycloak:
         condition: service_healthy
@@ -218,7 +218,7 @@ services:
       - elk
 
   webprotege-ontology-processing-service:
-    image: protegeproject/webprotege-ontology-processing-service:1.0.2
+    image: protegeproject/webprotege-ontology-processing-service:1.0.3
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -264,7 +264,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.0.1
+    image: protegeproject/webprotege-backend-service:2.0.2
     ports:
       - '5005:5005'
     depends_on:
