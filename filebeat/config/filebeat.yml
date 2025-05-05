@@ -1,0 +1,19 @@
+filebeat.inputs:
+- type: container
+  paths:
+    - '/var/lib/docker/containers/*/*.log'
+
+processors:
+  - add_docker_metadata:
+      host: "unix:///var/run/docker.sock"
+
+filebeat.config:
+  modules:
+    path: ${path.config}/modules.d/*.yml
+    reload.enabled: false
+
+output.logstash:
+  hosts: ["logstash:5044"]
+
+logging.json: true
+logging.metrics.enabled: false 
