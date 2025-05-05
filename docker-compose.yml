@@ -114,7 +114,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:2.0.1
+    image: protegeproject/webprotege-authorization-service:2.0.2
     depends_on:
       keycloak:
         condition: service_healthy
