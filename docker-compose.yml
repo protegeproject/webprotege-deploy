@@ -113,7 +113,7 @@ services:
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.websocketUrl: ${WEBSOCKET_URL}
       webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
-      WEBPROTEGE_LOGOUTURL: http://${SERVER_HOST}/webprotege/logout
+      webprotege.logoutRedirectUrl: http://${SERVER_HOST}/webprotege
       webprotege.fileUploadurl: http://${SERVER_HOST}
       webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
       webprotege.rabbit.timeout: 300000
