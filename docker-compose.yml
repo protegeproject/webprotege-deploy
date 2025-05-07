@@ -305,8 +305,9 @@ services:
       JVM_ENV: -Xms7g -Xmx7g -XX:MaxRAMPercentage=70
       webprotege.rabbit.timeout: 600000
     volumes:
-      - webprotege-data-directory:/srv/webprotege
-      - webprotege-backup-directory:/webprotege/backup
+      - /srv/webprotege:/srv/webprotege
+      - /webprotege/backup:/webprotege/backup
+
     logging:
       driver: "json-file"
       options:
