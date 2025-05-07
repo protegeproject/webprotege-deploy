@@ -543,6 +543,13 @@ services:
       - XPACK_SECURITY_ENABLED=false
       - ELASTICSEARCH_USERNAME=kibana_system
       - ELASTICSEARCH_PASSWORD=kibana
+      - SERVER_BASEPATH=/kibana
+      - SERVER_REWRITEBASEPATH=true
+      - SERVER_PUBLICBASEURL=http://${SERVER_HOST}/kibana
+      - SERVER_HOST=0.0.0.0
+      - SERVER_NAME=kibana
+      - SERVER_MAXPAYLOADBYTES=1048576
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
     volumes:
       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
       - ./kibana/dashboards:/usr/share/kibana/dashboards
