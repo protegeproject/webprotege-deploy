@@ -205,8 +205,6 @@ services:
     ports:
       - '5006:5006'
     depends_on:
-      mongo:
-        condition: service_started
       zipkin:
         condition: service_started
       rabbitmq:
