@@ -201,7 +201,7 @@ services:
       - elk
 
   webprotege-event-history-service:
-    image: protegeproject/webprotege-event-history-service:2.0.13-WHO
+    image: protegeproject/webprotege-event-history-service:2.0.15-WHO
     ports:
       - '5006:5006'
     depends_on:
@@ -276,7 +276,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.2.14-WHO
+    image: protegeproject/webprotege-backend-service:2.2.15-WHO
     ports:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
@@ -318,7 +318,7 @@ services:
 
   webprotege-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.20
+    image: protegeproject/webprotege-linearization-service:1.0.21
     ports:
       - '5011:5011'
     depends_on:
@@ -465,7 +465,7 @@ services:
 
 
   icatx-id-generation-service:
-    image: protegeproject/icatx-id-generation-service:0.0.2
+    image: protegeproject/icatx-id-generation-service:0.0.3
     depends_on:
       rabbitmq:
         condition: service_healthy
