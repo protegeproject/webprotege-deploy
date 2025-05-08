@@ -68,7 +68,7 @@ services:
       - elk
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:2.0.7-WHO
+    image: protegeproject/webprotege-gwt-api-gateway:2.0.8-WHO
     depends_on:
       keycloak:
         condition: service_healthy
@@ -144,7 +144,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:2.0.2-WHO
+    image: protegeproject/webprotege-authorization-service:2.0.5-WHO
     ports:
       - '5010:5010'
     depends_on:
@@ -276,7 +276,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:2.2.15-WHO
+    image: protegeproject/webprotege-backend-service:2.2.16-WHO
     ports:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
@@ -318,7 +318,7 @@ services:
 
   webprotege-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.21
+    image: protegeproject/webprotege-linearization-service:1.0.22
     ports:
       - '5011:5011'
     depends_on:
@@ -350,7 +350,7 @@ services:
 
   webprotege-postcoordination-service:
     user: root
-    image: protegeproject/webprotege-postcoordination-service:1.0.19
+    image: protegeproject/webprotege-postcoordination-service:1.0.20
     ports:
       - '5012:5012'
     depends_on:
