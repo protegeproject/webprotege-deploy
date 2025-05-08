@@ -68,7 +68,7 @@ services:
       - elk
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:2.0.5-WHO
+    image: protegeproject/webprotege-gwt-api-gateway:2.0.6-WHO
     depends_on:
       keycloak:
         condition: service_healthy
