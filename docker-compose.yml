@@ -588,4 +588,4 @@ volumes:
 networks:
   elk:
     driver: bridge
-    name: webprotege_elk
+    name: elk
