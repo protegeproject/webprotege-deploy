@@ -128,7 +128,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:2.0.1-WHO
+    image: protegeproject/webprotege-authorization-service:2.0.2-WHO
     ports:
       - '5010:5010'
     depends_on:
