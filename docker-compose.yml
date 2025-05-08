@@ -465,7 +465,7 @@ services:
 
 
   icatx-id-generation-service:
-    image: protegeproject/icatx-id-generation-service:0.0.2
+    image: protegeproject/icatx-id-generation-service:0.0.3
     depends_on:
       rabbitmq:
         condition: service_healthy
