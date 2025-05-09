@@ -8,6 +8,8 @@ services:
       - 27017:27017
     volumes:
       - mongo-data-directory:/data/db
+    networks:
+      - elk
 
   rabbitmq:
     image: rabbitmq:management
@@ -20,6 +22,8 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
+    networks:
+      - elk
 
 
   keycloak:
@@ -41,15 +45,19 @@ services:
       - keycloak-h2-directory:/opt/keycloak/data
       - ./keycloak:/tmp
     healthcheck:
-      test: [ "CMD", "/opt/keycloak/bin/kc.sh", "show-config" ]
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak-admin", "--realm", "master", "--user", "admin", "--password", "password"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - elk
 
   zipkin:
     image: openzipkin/zipkin
     ports:
       - 9411:9411
+    networks:
+      - elk
 
   minio:
     image: minio/minio
@@ -63,9 +71,13 @@ services:
     environment:
       MINIO_ROOT_USER: webprotege
       MINIO_ROOT_PASSWORD: webprotege
+    networks:
+      - elk
 
   webprotege-gwt-api-gateway:
     image: protegeproject/webprotege-gwt-api-gateway:2.0.7
+    ports:
+      - '5008:5008'
     depends_on:
       keycloak:
         condition: service_healthy
@@ -89,6 +101,16 @@ services:
       spring.servlet.multipart.max-file-size: 300MB
       spring.servlet.multipart.max-request-size: 300MB
       webprotege.rabbit.timeout: 600000
+      _JAVA_OPTIONS: >
+        -Xdebug
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - elk
 
 
   webprotege-gwt-ui-server:
@@ -111,10 +133,19 @@ services:
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - elk
 
 
   webprotege-authorization-service:
     image: protegeproject/webprotege-authorization-service:2.0.2
+    ports:
+      - '5010:5010'
     depends_on:
       keycloak:
         condition: service_healthy
@@ -130,6 +161,16 @@ services:
       keycloak.jwk-set-uri: http://keycloak:8080
       spring.zipkin.baseUrl: http://zipkin:9411
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      _JAVA_OPTIONS: >
+        -Xdebug
+        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - elk
 
   webprotege-user-management-service:
     image: protegeproject/webprotege-user-management-service:1.0.10
@@ -144,9 +185,16 @@ services:
         condition: service_healthy
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - elk
 
   webprotege-event-history-service:
-    image: protegeproject/webprotege-event-history-service:1.0.2
+    image: protegeproject/webprotege-event-history-service:2.0.0
     ports:
       - '5006:5006'
     depends_on:
@@ -161,9 +209,16 @@ services:
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - elk
 
   webprotege-ontology-processing-service:
-    image: protegeproject/webprotege-ontology-processing-service:1.0.3
+    image: protegeproject/webprotege-ontology-processing-service:1.0.2
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -176,10 +231,17 @@ services:
       webprotege.minio.accessKey: webprotege
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - elk
 
 
   webprotege-initial-revision-history-service:
-    image: protegeproject/webprotege-initial-revision-history-service:1.0.0
+    image: protegeproject/webprotege-initial-revision-history-service:1.0.4
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -192,6 +254,13 @@ services:
       webprotege.minio.accessKey: webprotege
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - elk
 
   webprotege-backend-service:
     user: root
@@ -216,9 +285,96 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       webprotege.rabbit.timeout: 600000
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - elk
     volumes:
     - webprotege-data-directory:/srv/webprotege
 
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - elk
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9200"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.2
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    environment:
+      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
+      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
+    networks:
+      - elk
+    depends_on:
+      - elasticsearch
+
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:8.12.2
+    user: root
+    volumes:
+      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    networks:
+      - elk
+    depends_on:
+      - logstash
+    command: ["filebeat", "-e", "--strict.perms=false", "-c", "/usr/share/filebeat/filebeat.yml"]
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.2
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - XPACK_SAVED_OBJECTS_IMPORT=/usr/share/kibana/dashboards/webprotege-logs.ndjson
+      - ELASTICSEARCH_SERVICE_HOST=elasticsearch
+      - ELASTICSEARCH_SERVICE_PORT=9200
+      - XPACK_SECURITY_ENABLED=false
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=kibana
+      - SERVER_BASEPATH=/kibana
+      - SERVER_REWRITEBASEPATH=true
+      - SERVER_PUBLICBASEURL=http://${SERVER_HOST}/kibana
+      - SERVER_HOST=0.0.0.0
+      - SERVER_NAME=kibana
+      - SERVER_MAXPAYLOADBYTES=1048576
+      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
+      - ./kibana/dashboards:/usr/share/kibana/dashboards
+    networks:
+      - elk
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5601"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
 
   nginx:
     image: protegeproject/webprotege-nginx:1.2.2
@@ -228,9 +384,17 @@ services:
     depends_on: 
       - webprotege-gwt-ui-server
       - keycloak
+    networks:
+      - elk
 
 volumes:
   webprotege-data-directory:
   mongo-data-directory:
   keycloak-h2-directory:
   minio_data:
+  elasticsearch-data:
+
+networks:
+  elk:
+    driver: bridge
+    name: elk
