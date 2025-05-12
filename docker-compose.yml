@@ -143,7 +143,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:2.0.2
+    image: protegeproject/webprotege-authorization-service:3.0.1
     ports:
       - '5010:5010'
     depends_on:
