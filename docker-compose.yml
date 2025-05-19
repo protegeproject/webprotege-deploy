@@ -100,6 +100,7 @@ services:
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://webprotege-local.edu/keycloak-admin/realms/webprotege
       spring.servlet.multipart.max-file-size: 300MB
       spring.servlet.multipart.max-request-size: 300MB
+      WEBPROTEGE_ALLOWEDORIGIN: http://${SERVER_HOST}
       webprotege.rabbit.timeout: 600000
       _JAVA_OPTIONS: >
         -Xdebug
@@ -126,8 +127,12 @@ services:
       minio.access.key: minioadmin
       minio.access.secret: minioadmin
       minio.endPoint: http://minio:9000
-      KEYCLOAK_AUTH_URL: http://webprotege-local.edu/keycloak-admin
+      KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak-admin/
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
+      webprotege.websocketUrl: wss://${SERVER_HOST}/wsapps
+      webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
+      webprotege.fileUploadurl: http://${SERVER_HOST}
+      webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
       webprotege.rabbit.timeout: 300000
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       _JAVA_OPTIONS: >
@@ -160,7 +165,9 @@ services:
       spring.data.mongodb.database: webprotege
       keycloak.jwk-set-uri: http://keycloak:8080
       spring.zipkin.baseUrl: http://zipkin:9411
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      KEYCLOAK_ISSUER_URL: ${JWK_SET_URI}
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
@@ -185,6 +192,11 @@ services:
         condition: service_healthy
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
+      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
+      webprotege.keycloak.clientSecret: ${ADMIN_CLI_SECRET}
+      webprotege.keycloak.clientId: user-management
+      LOGGING_LEVEL_ROOT: INFO
     logging:
       driver: "json-file"
       options:
@@ -205,7 +217,13 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
+      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
+      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_MONGODB_CORE_MONGOTEMPLATE: INFO
+      LOGGING_LEVEL_ORG_MONGODB_DRIVER: INFO
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
+
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
@@ -280,6 +298,7 @@ services:
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
+      SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
@@ -378,16 +397,17 @@ services:
 
   nginx:
     image: protegeproject/webprotege-nginx:1.2.2
-    hostname: webprotege-local.edu
+    hostname: ${SERVER_HOST}
     ports:
       - 80:80
-    depends_on: 
+    depends_on:
       - webprotege-gwt-ui-server
       - keycloak
     networks:
       - elk
 
 volumes:
+
   webprotege-data-directory:
   mongo-data-directory:
   keycloak-h2-directory:
