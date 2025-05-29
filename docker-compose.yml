@@ -114,7 +114,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:8.1.1
+    image: protegeproject/webprotege-gwt-ui-server:8.2.0
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
