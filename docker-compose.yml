@@ -110,7 +110,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:8.2.1-WHO
+    image: protegeproject/webprotege-gwt-ui-server:8.2.2-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
