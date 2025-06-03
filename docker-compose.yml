@@ -39,11 +39,13 @@ services:
       - KC_FEATURES=hostname
       - KC_THEME=webprotege
       - KC_THEME_LOGIN=webprotege
+      - KC_DB=dev-file
+      - KC_DB_URL=jdbc:h2:file:/opt/keycloak/data/keycloakdb
     volumes:
       - keycloak-h2-directory:/opt/keycloak/data
       - ./keycloak/webprotege.v2:/opt/keycloak/themes/webprotege.v2
     healthcheck:
-      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak-admin", "--realm", "master", "--user", "${KEYCLOAK_ADMIN}", "--password", "${KEYCLOAK_ADMIN_PASSWORD}"]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/keycloak-admin/health"]
       interval: 10s
       timeout: 5s
       retries: 10
