@@ -13,9 +13,8 @@ services:
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
       - RABBITMQ_MANAGEMENT_USER=${RABBITMQ_MANAGEMENT_USER}
       - RABBITMQ_MANAGEMENT_PASS=${RABBITMQ_MANAGEMENT_PASS}
-      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK=0.85
-      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK_PAGING_RATIO=0.8
-      - RABBITMQ_VM_MEMORY_HIGH_WATERMARK_ABSOLUTE=4GB
+    volumes:
+      - ./rabbitmq/config/rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
     deploy:
       resources:
         limits:
