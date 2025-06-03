@@ -39,8 +39,6 @@ services:
       - KC_FEATURES=hostname
       - KC_THEME=webprotege
       - KC_THEME_LOGIN=webprotege
-      - KC_DB=dev-file
-      - KC_DB_URL=jdbc:h2:file:/opt/keycloak/data/keycloakdb
     volumes:
       - keycloak-h2-directory:/opt/keycloak/data
       - ./keycloak/webprotege.v2:/opt/keycloak/themes/webprotege.v2
