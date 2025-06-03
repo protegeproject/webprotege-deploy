@@ -31,8 +31,8 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=password
+      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
       - KC_PROXY=edge
       - KC_LOG_LEVEL=INFO
       - KC_HTTP_RELATIVE_PATH=/keycloak-admin
@@ -43,7 +43,7 @@ services:
       - keycloak-h2-directory:/opt/keycloak/data
       - ./keycloak/webprotege.v2:/opt/keycloak/themes/webprotege.v2
     healthcheck:
-      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak-admin", "--realm", "master", "--user", "admin", "--password", "password"]
+      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak-admin", "--realm", "master", "--user", "${KEYCLOAK_ADMIN}", "--password", "${KEYCLOAK_ADMIN_PASSWORD}"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -67,8 +67,8 @@ services:
       - '9000:9000'
       - '9001:9001'
     environment:
-      MINIO_ROOT_USER: webprotege
-      MINIO_ROOT_PASSWORD: webprotege
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
     networks:
       - elk
 
@@ -84,7 +84,6 @@ services:
       zipkin:
         condition: service_started
     ports:
-      - '5008:5008'
       - '7777:7777'
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
@@ -94,24 +93,16 @@ services:
       SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
-      webprotege.minio.bucketName: "webprotege-uploads"
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.bucketName: ${MINIO_BUCKET_NAME}
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: http://minio:9000
-      spring.servlet.multipart.max-file-size: 300MB
-      spring.servlet.multipart.max-request-size: 300MB
+      spring.servlet.multipart.max-file-size: ${MAX_FILE_SIZE}
+      spring.servlet.multipart.max-request-size: ${MAX_REQUEST_SIZE}
       WEBPROTEGE_ALLOWEDORIGIN: http://${SERVER_HOST}
-      webprotege.rabbit.timeout: 600000
+      webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
     networks:
       - elk
 
@@ -126,8 +117,8 @@ services:
     ports:
       - '5007:5007'
     environment:
-      minio.access.key: minioadmin
-      minio.access.secret: minioadmin
+      minio.access.key: ${MINIO_ROOT_USER}
+      minio.access.secret: ${MINIO_ROOT_PASSWORD}
       minio.endPoint: http://minio:9000
       KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak-admin/
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
@@ -136,16 +127,8 @@ services:
       webprotege.logoutRedirectUrl: http://${SERVER_HOST}/webprotege
       webprotege.fileUploadurl: http://${SERVER_HOST}
       webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
-      webprotege.rabbit.timeout: 300000
+      webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
     networks:
       - elk
 
@@ -169,14 +152,6 @@ services:
       KEYCLOAK_ISSUER_URL: ${JWK_SET_URI}
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
     networks:
       - elk
 
@@ -196,18 +171,10 @@ services:
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
       webprotege.keycloak.clientSecret: ${ADMIN_CLI_SECRET}
-      webprotege.keycloak.clientId: admin-cli
+      webprotege.keycloak.clientId: ${KEYCLOAK_CLIENT_ID}
       LOGGING_LEVEL_ROOT: INFO
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5009
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
     networks:
       - elk
 
@@ -229,14 +196,6 @@ services:
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "10m"
-        max-file: "3"
     networks:
       - elk
 
@@ -252,8 +211,8 @@ services:
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       LOGGING_LEVEL_ROOT: INFO
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: http://minio:9000
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
@@ -277,8 +236,8 @@ services:
         condition: service_started
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: http://minio:9000
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
@@ -303,8 +262,8 @@ services:
         condition: service_healthy
     environment:
       spring.zipkin.baseUrl: "http://zipkin:9411"
-      webprotege.minio.accessKey: "webprotege"
-      webprotege.minio.secretKey: "webprotege"
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: "http://minio:9000"
       webprotege.directories.data: "/srv/webprotege"
       webprotege.directories.backup : "/webprotege/backup"
@@ -312,16 +271,9 @@ services:
       LOGGING_LEVEL_ROOT: INFO
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
-        -Dcom.sun.management.jmxremote
-        -Dcom.sun.management.jmxremote.port=9010
-        -Dcom.sun.management.jmxremote.authenticate=false
-        -Dcom.sun.management.jmxremote.ssl=false
-      JDK_JAVA_OPTIONS: "--add-opens java.base/sun.net=ALL-UNNAMED"
+      webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
+      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       JVM_ENV: -Xms7g -Xmx7g -XX:MaxRAMPercentage=70
-      webprotege.rabbit.timeout: 600000
     volumes:
       - /srv/webprotege:/srv/webprotege
       - /webprotege/backup:/webprotege/backup
@@ -346,18 +298,15 @@ services:
         condition: service_healthy
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5011
+      webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      webprotege.rabbit.timeout: 600000
     volumes:
       - webprotege-data-directory:/srv/webprotege
     logging:
@@ -380,18 +329,15 @@ services:
         condition: service_healthy
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5012
+      webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      webprotege.rabbit.timeout: 600000
     volumes:
       - webprotege-data-directory:/srv/webprotege
     logging:
@@ -416,8 +362,8 @@ services:
     environment:
       SSH_PRIVATE_KEY: ${SSH_PRIVATE_KEY}
       spring.zipkin.baseUrl: http://zipkin:9411
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
       webprotege.directories.backup: /webprotege/backup
@@ -431,11 +377,8 @@ services:
       LOGGER_LEVEL_ROOT: INFO
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5013
+      webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      webprotege.rabbit.timeout: 600000
     logging:
       driver: "json-file"
       options:
@@ -461,8 +404,8 @@ services:
         condition: service_healthy
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${ISSUER_URI}
@@ -473,11 +416,8 @@ services:
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5014
+      webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      webprotege.rabbit.timeout: 600000
     volumes:
       - webprotege-data-directory:/srv/webprotege
       - webprotege-backup-directory:/webprotege/backup
