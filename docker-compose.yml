@@ -43,7 +43,7 @@ services:
       - keycloak-h2-directory:/opt/keycloak/data
       - ./keycloak/webprotege.v2:/opt/keycloak/themes/webprotege.v2
     healthcheck:
-      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak-admin", "--realm", "master", "--user", "$${KEYCLOAK_ADMIN}", "--password", "$${KEYCLOAK_ADMIN_PASSWORD}"]
+      test: ["CMD-SHELL", "/opt/keycloak/bin/kcadm.sh get realms/webprotege --server http://localhost:8080/keycloak-admin --realm master --user $KEYCLOAK_ADMIN --password $KEYCLOAK_ADMIN_PASSWORD"]
       interval: 10s
       timeout: 5s
       retries: 10
