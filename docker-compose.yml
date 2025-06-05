@@ -443,8 +443,8 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-      elasticsearch:
-        condition: service_healthy
+#      elasticsearch:
+#        condition: service_healthy
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       LOGGING_LEVEL_ROOT: INFO
@@ -559,7 +559,7 @@ volumes:
   minio_data:
   webprotege-backup-directory:
   webprotege-versioning-directory:
-  elasticsearch-data:
+#  elasticsearch-data:
 
 networks:
   elk:
