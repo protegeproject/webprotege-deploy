@@ -122,6 +122,7 @@ services:
       webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
       webprotege.entityHistoryUrlFormat: ${ENTITY_HISTORY_URL_FORMAT}
       webprotege.entityNotesUrlFormat: ${ENTITY_NOTES_URL_FORMAT}
+      webprotege.entityOldHistoryAndNotesDate: ${ENTITY_OLD_HISTORY_AND_NOTES_DATE}
       webprotege.rabbit.timeout: 300000
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       _JAVA_OPTIONS: >
