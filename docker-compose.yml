@@ -461,8 +461,7 @@ services:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
     environment:
       - discovery.type=single-node
-      - xpack.security.enabled=true
-      - ELASTIC_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - xpack.security.enabled=false
       - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
     ports:
       - "9200:9200"
@@ -515,9 +514,9 @@ services:
       - XPACK_SAVED_OBJECTS_IMPORT=/usr/share/kibana/dashboards/webprotege-logs.ndjson
       - ELASTICSEARCH_SERVICE_HOST=elasticsearch
       - ELASTICSEARCH_SERVICE_PORT=9200
-      - XPACK_SECURITY_ENABLED=true
-      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
-      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
+      - XPACK_SECURITY_ENABLED=false
+      - ELASTICSEARCH_USERNAME=kibana_system
+      - ELASTICSEARCH_PASSWORD=kibana
       - SERVER_BASEPATH=/kibana
       - SERVER_REWRITEBASEPATH=true
       - SERVER_PUBLICBASEURL=http://${SERVER_HOST}/kibana
@@ -525,8 +524,6 @@ services:
       - SERVER_NAME=kibana
       - SERVER_MAXPAYLOADBYTES=1048576
       - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
-      - KIBANA_USERNAME=${KIBANA_USERNAME}
-      - KIBANA_PASSWORD=${KIBANA_PASSWORD}
     volumes:
       - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
       - ./kibana/dashboards:/usr/share/kibana/dashboards
