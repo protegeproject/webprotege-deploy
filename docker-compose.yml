@@ -439,7 +439,7 @@ services:
 
 
   icatx-id-generation-service:
-    image: protegeproject/icatx-id-generation-service:0.0.13
+    image: protegeproject/icatx-id-generation-service:0.0.14
     depends_on:
       rabbitmq:
         condition: service_healthy
