@@ -386,6 +386,9 @@ services:
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
+      webprotege.keycloak.token-url: ${KEYCLOAK_TOKEN_URL}
+      webprotege.keycloak.client-id: ${ICATX_CLIENT_ID}
+      webprotege.keycloak.client-secret: ${ICATX_CLIENT_SECRET}
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
     logging:
       driver: "json-file"
