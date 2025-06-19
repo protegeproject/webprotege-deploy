@@ -116,7 +116,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:8.3.19-WHO
+    image: protegeproject/webprotege-gwt-ui-server:8.3.22-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -259,7 +259,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:4.2.12-WHO
+    image: protegeproject/webprotege-backend-service:4.2.14-WHO
     ports:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
@@ -358,7 +358,7 @@ services:
 
   icatx-versioning-service:
     user: root
-    image: protegeproject/icatx-versioning-service:0.0.8
+    image: protegeproject/icatx-versioning-service:0.0.9
     ports:
       - '5013:5013'
       - '7722:7722'
