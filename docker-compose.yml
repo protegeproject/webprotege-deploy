@@ -314,7 +314,7 @@ services:
 
   icatx-versioning-service:
     user: root
-    image: protegeproject/icatx-versioning-service:0.0.11
+    image: protegeproject/icatx-versioning-service:0.0.12
     ports:
       - '5013:5013'
       - '7722:7722'
