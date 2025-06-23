@@ -281,7 +281,7 @@ services:
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      JVM_ENV: -Xms7g -Xmx7g -XX:MaxRAMPercentage=70
+      JVM_ENV: -Xms12g -Xmx12g -XX:MaxRAMPercentage=70
     volumes:
       - /srv/webprotege:/srv/webprotege
       - /webprotege/backup:/webprotege/backup
