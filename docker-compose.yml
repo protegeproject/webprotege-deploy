@@ -327,7 +327,7 @@ services:
 
   webprotege-postcoordination-service:
     user: root
-    image: protegeproject/webprotege-postcoordination-service:1.0.34
+    image: protegeproject/webprotege-postcoordination-service:1.0.35
     ports:
       - '5012:5012'
     depends_on:
