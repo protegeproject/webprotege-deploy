@@ -29,34 +29,34 @@ services:
     networks:
       - elk
 
-
-  keycloak:
-    image: alexsilaghi93/webprotege-keycloak:0.0.1
-    command: [ "start-dev" ]
-    ports:
-      - 8080:8080
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-    environment:
-      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
-      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
-      - KC_PROXY=edge
-      - KC_LOG_LEVEL=INFO
-      - KC_HTTP_RELATIVE_PATH=/keycloak-admin
-      - KC_FEATURES=hostname
-      - KC_THEME=webprotege
-      - KC_THEME_LOGIN=webprotege
-    volumes:
-      - keycloak-h2-directory:/opt/keycloak/data
-      - ./keycloak/webprotege.v2:/opt/keycloak/themes/webprotege.v2
-    healthcheck:
-      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak-admin", "--realm", "master", "--user", "${KEYCLOAK_ADMIN}", "--password", "${KEYCLOAK_ADMIN_PASSWORD}"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-    networks:
-      - elk
+#
+#  keycloak:
+#    image: alexsilaghi93/webprotege-keycloak:0.0.1
+#    command: [ "start-dev" ]
+#    ports:
+#      - 8080:8080
+#    depends_on:
+#      rabbitmq:
+#        condition: service_healthy
+#    environment:
+#      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
+#      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
+#      - KC_PROXY=edge
+#      - KC_LOG_LEVEL=INFO
+#      - KC_HTTP_RELATIVE_PATH=/keycloak-admin
+#      - KC_FEATURES=hostname
+#      - KC_THEME=webprotege
+#      - KC_THEME_LOGIN=webprotege
+#    volumes:
+#      - keycloak-h2-directory:/opt/keycloak/data
+#      - ./keycloak/webprotege.v2:/opt/keycloak/themes/webprotege.v2
+#    healthcheck:
+#      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak-admin", "--realm", "master", "--user", "${KEYCLOAK_ADMIN}", "--password", "${KEYCLOAK_ADMIN_PASSWORD}"]
+#      interval: 10s
+#      timeout: 5s
+#      retries: 10
+#    networks:
+#      - elk
 
   zipkin:
     image: openzipkin/zipkin
@@ -83,8 +83,6 @@ services:
   webprotege-gwt-api-gateway:
     image: protegeproject/webprotege-gwt-api-gateway:2.0.10-WHO
     depends_on:
-      keycloak:
-        condition: service_healthy
       minio:
         condition: service_started
       rabbitmq:
@@ -120,15 +118,13 @@ services:
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
-      keycloak:
-        condition: service_healthy
     ports:
       - '5007:5007'
     environment:
       minio.access.key: ${MINIO_ROOT_USER}
       minio.access.secret: ${MINIO_ROOT_PASSWORD}
       minio.endPoint: http://minio:9000
-      KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak-admin/
+      KEYCLOAK_AUTH_URL: ${KEYCLOAK_HOST}/
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.websocketUrl: ${WEBSOCKET_URL}
       webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
@@ -146,8 +142,6 @@ services:
     ports:
       - '5010:5010'
     depends_on:
-      keycloak:
-        condition: service_healthy
       zipkin:
         condition: service_started
       rabbitmq:
@@ -168,8 +162,6 @@ services:
     ports:
       - '5009:5009'
     depends_on:
-      keycloak:
-        condition: service_healthy
       zipkin:
         condition: service_started
       rabbitmq:
@@ -177,7 +169,7 @@ services:
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
-      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
+      webprotege.keycloak.serverUrl: ${KEYCLOAK_HOST}
       webprotege.keycloak.clientSecret: ${ADMIN_CLI_SECRET}
       webprotege.keycloak.clientId: ${KEYCLOAK_CLIENT_ID}
       LOGGING_LEVEL_ROOT: INFO
@@ -196,7 +188,7 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
-      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
+      webprotege.keycloak.serverUrl: ${KEYCLOAK_HOST}
       LOGGING_LEVEL_ROOT: INFO
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_MONGODB_CORE_MONGOTEMPLATE: INFO
       LOGGING_LEVEL_ORG_MONGODB_DRIVER: INFO
@@ -549,14 +541,12 @@ services:
       - 443:433
     depends_on:
       - webprotege-gwt-ui-server
-      - keycloak
     networks:
       - elk
 
 volumes:
 
   webprotege-data-directory:
-  keycloak-h2-directory:
   minio_data:
   webprotege-backup-directory:
   webprotege-versioning-directory:
