@@ -91,10 +91,16 @@ services:
         condition: service_started
     ports:
       - '7777:7777'
+    volumes:
+      - ./certs/custom-truststore.jks:/opt/java/openjdk/lib/security/custom-truststore.jks:ro
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
       LOGGING_LEVEL_ROOT: INFO
-      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      JDK_JAVA_OPTIONS: >-
+        --add-opens java.base/sun.net=ALL-UNNAMED
+        -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/custom-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
+        -Djavax.net.ssl.trustStoreType=JKS
       SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE: NONE
       SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
@@ -120,6 +126,8 @@ services:
         condition: service_started
     ports:
       - '5007:5007'
+    volumes:
+      - ./certs/custom-truststore.jks:/opt/java/openjdk/lib/security/custom-truststore.jks:ro
     environment:
       minio.access.key: ${MINIO_ROOT_USER}
       minio.access.secret: ${MINIO_ROOT_PASSWORD}
@@ -132,7 +140,11 @@ services:
       webprotege.fileUploadurl: http://${SERVER_HOST}
       webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
-      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      JDK_JAVA_OPTIONS: >-
+        --add-opens java.base/sun.net=ALL-UNNAMED
+        -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/custom-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
+        -Djavax.net.ssl.trustStoreType=JKS
     networks:
       - elk
 
@@ -146,11 +158,17 @@ services:
         condition: service_started
       rabbitmq:
         condition: service_healthy
+    volumes:
+      - ./certs/custom-truststore.jks:/opt/java/openjdk/lib/security/custom-truststore.jks:ro
     environment:
       LOGGING_LEVEL_ROOT: INFO
       spring.zipkin.baseUrl: http://zipkin:9411
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
-      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      JDK_JAVA_OPTIONS: >-
+        --add-opens java.base/sun.net=ALL-UNNAMED
+        -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/custom-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
+        -Djavax.net.ssl.trustStoreType=JKS
       KEYCLOAK_ISSUER_URL: ${JWK_SET_URI}
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
@@ -166,8 +184,14 @@ services:
         condition: service_started
       rabbitmq:
         condition: service_healthy
+    volumes:
+      - ./certs/custom-truststore.jks:/opt/java/openjdk/lib/security/custom-truststore.jks:ro
     environment:
-      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      JDK_JAVA_OPTIONS: >-
+        --add-opens java.base/sun.net=ALL-UNNAMED
+        -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/custom-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
+        -Djavax.net.ssl.trustStoreType=JKS
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       webprotege.keycloak.serverUrl: ${KEYCLOAK_HOST}
       webprotege.keycloak.clientSecret: ${ADMIN_CLI_SECRET}
@@ -187,12 +211,18 @@ services:
         condition: service_started
       rabbitmq:
         condition: service_healthy
+    volumes:
+      - ./certs/custom-truststore.jks:/opt/java/openjdk/lib/security/custom-truststore.jks:ro
     environment:
       webprotege.keycloak.serverUrl: ${KEYCLOAK_HOST}
       LOGGING_LEVEL_ROOT: INFO
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_MONGODB_CORE_MONGOTEMPLATE: INFO
       LOGGING_LEVEL_ORG_MONGODB_DRIVER: INFO
-      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      JDK_JAVA_OPTIONS: >-
+        --add-opens java.base/sun.net=ALL-UNNAMED
+        -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/custom-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
+        -Djavax.net.ssl.trustStoreType=JKS
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
