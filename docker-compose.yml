@@ -81,7 +81,7 @@ services:
       - elk
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:2.0.10-WHO
+    image: protegeproject/webprotege-gwt-api-gateway:2.0.11-WHO
     depends_on:
       minio:
         condition: service_started
@@ -433,7 +433,7 @@ services:
 
   icatx-api-gateway:
     user: root
-    image: protegeproject/icatx-api-gateway:0.0.80
+    image: protegeproject/icatx-api-gateway:0.0.81
     ports:
       - '5014:5014'
       - '7779:7779'
