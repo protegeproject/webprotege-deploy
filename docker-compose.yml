@@ -111,7 +111,7 @@ services:
       webprotege.minio.endPoint: http://minio:9000
       spring.servlet.multipart.max-file-size: ${MAX_FILE_SIZE}
       spring.servlet.multipart.max-request-size: ${MAX_REQUEST_SIZE}
-      WEBPROTEGE_ALLOWEDORIGIN: ${SERVER_HOST}
+      WEBPROTEGE_ALLOWEDORIGIN: ${WEBPROTEGE_WEBSOCKET_ALLOWED_ORIGIN}
       WEBPROTEGE_WEBSOCKETENDPOINT: ${WEBPROTEGE_WEBSOCKETENDPOINT}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
