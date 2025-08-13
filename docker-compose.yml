@@ -411,7 +411,12 @@ services:
       webprotege.keycloak.token-url: ${KEYCLOAK_TOKEN_URL}
       webprotege.keycloak.client-id: ${ICATX_CLIENT_ID}
       webprotege.keycloak.client-secret: ${ICATX_CLIENT_SECRET}
-      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      JDK_JAVA_OPTIONS: >-
+        --add-opens java.base/sun.net=ALL-UNNAMED
+        -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/combined-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
+        -Djavax.net.ssl.trustStoreType=JKS
+
     logging:
       driver: "json-file"
       options:
@@ -423,6 +428,7 @@ services:
       - /srv/webprotege:/srv/webprotege
       - /webprotege/backup:/webprotege/backup
       - /srv/versioning/:/srv/versioning/
+      - ./certs/combined-truststore.jks:/opt/java/openjdk/lib/security/combined-truststore.jks:ro
 
   icatx-api-gateway:
     user: root
@@ -450,10 +456,15 @@ services:
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
-      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      JDK_JAVA_OPTIONS: >-
+        --add-opens java.base/sun.net=ALL-UNNAMED
+        -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/combined-truststore.jks
+        -Djavax.net.ssl.trustStorePassword=changeit
+        -Djavax.net.ssl.trustStoreType=JKS
     volumes:
       - webprotege-data-directory:/srv/webprotege
       - webprotege-backup-directory:/webprotege/backup
+      - ./certs/combined-truststore.jks:/opt/java/openjdk/lib/security/combined-truststore.jks:ro
     logging:
       driver: "json-file"
       options:
