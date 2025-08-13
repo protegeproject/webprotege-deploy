@@ -111,7 +111,7 @@ services:
       webprotege.minio.endPoint: http://minio:9000
       spring.servlet.multipart.max-file-size: ${MAX_FILE_SIZE}
       spring.servlet.multipart.max-request-size: ${MAX_REQUEST_SIZE}
-      WEBPROTEGE_ALLOWEDORIGIN: http://${SERVER_HOST}
+      WEBPROTEGE_ALLOWEDORIGIN: ${SERVER_HOST}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
@@ -135,9 +135,9 @@ services:
       KEYCLOAK_AUTH_URL: ${KEYCLOAK_HOST}/
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.websocketUrl: ${WEBSOCKET_URL}
-      webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
-      webprotege.logoutRedirectUrl: http://${SERVER_HOST}/webprotege
-      webprotege.fileUploadurl: http://${SERVER_HOST}
+      webprotege.logoutUrl: ${SERVER_HOST}/logout
+      webprotege.logoutRedirectUrl: ${SERVER_HOST}/webprotege
+      webprotege.fileUploadurl: ${SERVER_HOST}
       webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       JDK_JAVA_OPTIONS: >-
@@ -544,7 +544,7 @@ services:
       - ELASTICSEARCH_PASSWORD=kibana
       - SERVER_BASEPATH=/kibana
       - SERVER_REWRITEBASEPATH=true
-      - SERVER_PUBLICBASEURL=http://${SERVER_HOST}/kibana
+      - SERVER_PUBLICBASEURL=${SERVER_HOST}/kibana
       - SERVER_HOST=0.0.0.0
       - SERVER_NAME=kibana
       - SERVER_MAXPAYLOADBYTES=1048576
