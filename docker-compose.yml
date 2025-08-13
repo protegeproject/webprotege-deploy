@@ -112,7 +112,8 @@ services:
       spring.servlet.multipart.max-file-size: ${MAX_FILE_SIZE}
       spring.servlet.multipart.max-request-size: ${MAX_REQUEST_SIZE}
       WEBPROTEGE_ALLOWEDORIGIN: ${SERVER_HOST}
-      webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
+      WEBPROTEGE_WEBSOCKETENDPOINT: ${SERVER_HOST}
+      webprotege.rabbit.timeout: ${WEBSOCKET_ENDPOINT}
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
     networks:
@@ -136,7 +137,7 @@ services:
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.websocketUrl: ${WEBSOCKET_URL}
       webprotege.logoutUrl: ${SERVER_HOST}/logout
-      webprotege.logoutRedirectUrl: ${SERVER_HOST}/webprotege
+      webprotege.logoutRedirectUrl: ${SERVER_HOST}/webprotege/
       webprotege.fileUploadurl: ${SERVER_HOST}
       webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
