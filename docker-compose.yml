@@ -67,7 +67,7 @@ services:
       MINIO_ROOT_PASSWORD: webprotege
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:2.0.11-WHO
+    image: protegeproject/webprotege-gwt-api-gateway:2.0.12-WHO
     depends_on:
       keycloak:
         condition: service_healthy
