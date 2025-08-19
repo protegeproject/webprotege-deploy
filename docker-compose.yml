@@ -141,6 +141,7 @@ services:
       webprotege.fileUploadurl: ${SERVER_HOST}
       webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
+      CONTEXT_PATH: ${CONTEXT_PATH}
       JDK_JAVA_OPTIONS: >-
         --add-opens java.base/sun.net=ALL-UNNAMED
         -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/combined-truststore.jks
