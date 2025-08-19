@@ -137,7 +137,7 @@ services:
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.websocketUrl: ${WEBSOCKET_URL}
       webprotege.logoutUrl: ${SERVER_HOST}/logout
-      webprotege.logoutRedirectUrl: ${SERVER_HOST}/webprotege/
+      webprotege.logoutRedirectUrl: ${SERVER_HOST}/icatx/
       webprotege.fileUploadurl: ${SERVER_HOST}
       webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
