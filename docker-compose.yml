@@ -480,7 +480,7 @@ services:
 
 
   icatx-id-generation-service:
-    image: protegeproject/icatx-id-generation-service:0.0.19
+    image: protegeproject/icatx-id-generation-service:0.0.20
     depends_on:
       rabbitmq:
         condition: service_healthy
