@@ -232,7 +232,7 @@ services:
       - elk
 
   webprotege-ontology-processing-service:
-    image: protegeproject/webprotege-ontology-processing-service:1.0.2-WHO
+    image: protegeproject/webprotege-ontology-processing-service:1.0.0
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -258,7 +258,7 @@ services:
 
 
   webprotege-initial-revision-history-service:
-    image: protegeproject/webprotege-initial-revision-history-service:1.0.6-WHO
+    image: protegeproject/webprotege-initial-revision-history-service:1.0.0
     depends_on:
       rabbitmq:
         condition: service_healthy
