@@ -218,7 +218,7 @@ services:
       - elk
 
   webprotege-ontology-processing-service:
-    image: protegeproject/webprotege-ontology-processing-service:1.0.4
+    image: protegeproject/webprotege-ontology-processing-service:1.0.5
     depends_on:
       rabbitmq:
         condition: service_healthy
