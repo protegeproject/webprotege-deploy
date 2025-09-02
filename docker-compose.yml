@@ -205,7 +205,7 @@ services:
       - elk
 
   webprotege-event-history-service:
-    image: protegeproject/webprotege-event-history-service:2.0.20-WHO
+    image: protegeproject/webprotege-event-history-service:2.0.21-WHO
     ports:
       - '5006:5006'
     depends_on:
