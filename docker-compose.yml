@@ -152,7 +152,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:3.0.16-WHO
+    image: protegeproject/webprotege-authorization-service:3.0.17-WHO
     ports:
       - '5010:5010'
     depends_on:
