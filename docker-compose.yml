@@ -103,6 +103,7 @@ services:
         -Djavax.net.ssl.trustStoreType=JKS
       SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE: NONE
       SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
       webprotege.minio.bucketName: ${MINIO_BUCKET_NAME}
@@ -166,6 +167,7 @@ services:
       LOGGING_LEVEL_ROOT: INFO
       spring.zipkin.baseUrl: http://zipkin:9411
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       JDK_JAVA_OPTIONS: >-
         --add-opens java.base/sun.net=ALL-UNNAMED
         -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/combined-truststore.jks
@@ -196,6 +198,7 @@ services:
         -Djavax.net.ssl.trustStoreType=JKS
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       webprotege.keycloak.serverUrl: ${KEYCLOAK_HOST}
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       webprotege.keycloak.clientSecret: ${ADMIN_CLI_SECRET}
       webprotege.keycloak.clientId: ${KEYCLOAK_CLIENT_ID}
       LOGGING_LEVEL_ROOT: INFO
@@ -219,6 +222,7 @@ services:
       webprotege.keycloak.serverUrl: ${KEYCLOAK_HOST}
       LOGGING_LEVEL_ROOT: INFO
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_MONGODB_CORE_MONGOTEMPLATE: INFO
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       LOGGING_LEVEL_ORG_MONGODB_DRIVER: INFO
       JDK_JAVA_OPTIONS: >-
         --add-opens java.base/sun.net=ALL-UNNAMED
@@ -243,6 +247,7 @@ services:
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       LOGGING_LEVEL_ROOT: INFO
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       webprotege.minio.accessKey: ${MINIO_ROOT_USER}
       webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: http://minio:9000
@@ -269,6 +274,7 @@ services:
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       webprotege.minio.accessKey: ${MINIO_ROOT_USER}
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: http://minio:9000
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
@@ -304,6 +310,7 @@ services:
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       JVM_ENV: -Xms12g -Xmx12g -XX:MaxRAMPercentage=70
     volumes:
@@ -334,6 +341,7 @@ services:
       webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
@@ -369,6 +377,7 @@ services:
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
     volumes:
       - webprotege-data-directory:/srv/webprotege
@@ -404,6 +413,7 @@ services:
       spring.security.oauth2.resourceserver.jwt.issuer-uri: ${ISSUER_URI}
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: ${JWK_SET_URI}
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER-URI: ${ISSUER_URI}
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       webprotege.versioning.location: /srv/versioning/
       LOGGER_LEVEL_ROOT: INFO
@@ -461,6 +471,7 @@ services:
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       JDK_JAVA_OPTIONS: >-
         --add-opens java.base/sun.net=ALL-UNNAMED
         -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/combined-truststore.jks
@@ -494,6 +505,7 @@ services:
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
       SPRING_RABBITMQ_PASSWORD: ${RABBITMQ_DEFAULT_PASS}
+      SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
     networks:
       - elk
 
