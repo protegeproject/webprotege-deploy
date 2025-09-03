@@ -316,6 +316,7 @@ services:
     volumes:
       - /srv/webprotege:/srv/webprotege
       - /webprotege/backup:/webprotege/backup
+      - /mnt/data:/mnt/data
 
     logging:
       driver: "json-file"
