@@ -312,7 +312,7 @@ services:
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       SPRING_RABBITMQ_LISTENER_SIMPLE_ACKNOWLEDGE_MODE: auto
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      JVM_ENV: -Xms12g -Xmx12g -XX:MaxRAMPercentage=70
+      JVM_ENV: -Xms15g -Xmx15g -XX:MaxRAMPercentage=70
     volumes:
       - /srv/webprotege:/srv/webprotege
       - /webprotege/backup:/webprotege/backup
