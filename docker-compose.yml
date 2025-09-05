@@ -122,7 +122,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:8.3.47-WHO
+    image: protegeproject/webprotege-gwt-ui-server:8.3.48-WHO
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -392,7 +392,7 @@ services:
 
   icatx-versioning-service:
     user: root
-    image: protegeproject/icatx-versioning-service:0.0.21
+    image: protegeproject/icatx-versioning-service:0.0.22
     ports:
       - '5013:5013'
       - '7722:7722'
