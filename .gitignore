@@ -13,3 +13,4 @@ buildNumber.properties
 .env
 *.pem
 *.der
+keycloak
