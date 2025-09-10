@@ -263,7 +263,7 @@ services:
 
 
   webprotege-initial-revision-history-service:
-    image: protegeproject/webprotege-initial-revision-history-service:1.0.10-WHO
+    image: protegeproject/webprotege-initial-revision-history-service:1.0.11-WHO
     depends_on:
       rabbitmq:
         condition: service_healthy
