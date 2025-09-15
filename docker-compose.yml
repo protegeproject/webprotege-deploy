@@ -289,7 +289,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:4.2.33-WHO
+    image: protegeproject/webprotege-backend-service:4.2.34-WHO
     ports:
       - "5005:5005"  # For remote debugging
       - "9010:9010"  # For JMX monitoring
@@ -445,7 +445,7 @@ services:
 
   icatx-api-gateway:
     user: root
-    image: protegeproject/icatx-api-gateway:0.0.103
+    image: protegeproject/icatx-api-gateway:0.0.106
     ports:
       - '5014:5014'
       - '7779:7779'
