@@ -445,7 +445,7 @@ services:
 
   icatx-api-gateway:
     user: root
-    image: protegeproject/icatx-api-gateway:0.0.110
+    image: protegeproject/icatx-api-gateway:0.0.111
     ports:
       - '5014:5014'
       - '7779:7779'
