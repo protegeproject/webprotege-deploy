@@ -262,7 +262,7 @@ services:
 
   webprotege-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.40
+    image: protegeproject/webprotege-linearization-service:1.0.41
     ports:
       - '5011:5011'
     depends_on:
