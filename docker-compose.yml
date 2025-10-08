@@ -75,7 +75,7 @@ services:
       - elk
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:2.0.9
+    image: protegeproject/webprotege-gwt-api-gateway:3.0.1
     ports:
       - '5008:5008'
     depends_on:
