@@ -304,6 +304,7 @@ services:
       webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD}
       webprotege.minio.endPoint: "http://minio:9000"
       webprotege.directories.data: "/srv/webprotege"
+      WEBPROTEGE_DIRECTORIES_DATA: "/srv/webprotege"
       webprotege.directories.backup : "/webprotege/backup"
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       LOGGING_LEVEL_ROOT: INFO
