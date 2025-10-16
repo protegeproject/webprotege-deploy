@@ -180,7 +180,7 @@ services:
       - elk
 
   webprotege-user-management-service:
-    image: protegeproject/webprotege-user-management-service:1.0.12-WHO
+    image: protegeproject/webprotege-user-management-service:1.0.13-WHO
     ports:
       - '5009:5009'
     depends_on:
