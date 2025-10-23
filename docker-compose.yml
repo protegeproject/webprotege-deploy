@@ -306,6 +306,7 @@ services:
       webprotege.directories.data: "/srv/webprotege"
       WEBPROTEGE_DIRECTORIES_DATA: "/srv/webprotege"
       webprotege.directories.backup : "/webprotege/backup"
+      WEBPROTEGE_DIRECTORIES_BACKUP : "/webprotege/backup"
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       LOGGING_LEVEL_ROOT: INFO
       SPRING_RABBITMQ_USERNAME: ${RABBITMQ_DEFAULT_USER}
