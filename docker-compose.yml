@@ -95,7 +95,7 @@ services:
       - ./certs/combined-truststore.jks:/opt/java/openjdk/lib/security/combined-truststore.jks:ro
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
-      LOGGING_LEVEL_ROOT: DEBUG
+      LOGGING_LEVEL_ROOT: INFO
       JDK_JAVA_OPTIONS: >-
         --add-opens java.base/sun.net=ALL-UNNAMED
         -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/combined-truststore.jks
@@ -119,10 +119,6 @@ services:
       webprotege.rabbit.timeout: ${RABBITMQ_TIMEOUT}
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: ${KEYCLOAK_WEBPROTEGE_URL}
-      logging.level.org.springframework.security.messaging.web.socket: DEBUG
-      logging.level.org.springframework.web.socket.server: DEBUG
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY_MESSAGING_WEB_SOCKET: DEBUG
-      LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_WEB_SOCKET_SERVER : DEBUG
     networks:
       - elk
 
