@@ -95,7 +95,7 @@ services:
       - ./certs/combined-truststore.jks:/opt/java/openjdk/lib/security/combined-truststore.jks:ro
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
-      LOGGING_LEVEL_ROOT: INFO
+      LOGGING_LEVEL_ROOT: DEBUG
       JDK_JAVA_OPTIONS: >-
         --add-opens java.base/sun.net=ALL-UNNAMED
         -Djavax.net.ssl.trustStore=/opt/java/openjdk/lib/security/combined-truststore.jks
