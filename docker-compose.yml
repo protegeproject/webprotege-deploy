@@ -23,7 +23,7 @@ services:
 
 
   keycloak:
-    image: webprotege-keycloak:0.0.1
+    image: alexsilaghi93/webprotege-keycloak:0.0.1
     command: [ "start-dev" ]
     ports:
       - 8080:8080
@@ -195,7 +195,7 @@ services:
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
 
   webprotege-ontology-processing-service:
-    image: protegeproject/webprotege-ontology-processing-service:1.0.3-WHO
+    image: protegeproject/webprotege-ontology-processing-service:1.0.7
     depends_on:
       rabbitmq:
         condition: service_healthy
@@ -243,6 +243,7 @@ services:
       webprotege.minio.secretKey: "webprotege"
       webprotege.minio.endPoint: "http://minio:9000"
       webprotege.directories.data: "/srv/webprotege"
+      WEBPROTEGE_DIRECTORIES_DATA: "/srv/webprotege"
       webprotege.directories.backup : "/webprotege/backup"
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       LOGGING_LEVEL_ROOT: INFO
@@ -260,9 +261,9 @@ services:
       - webprotege-data-directory:/srv/webprotege
       - webprotege-backup-directory:/webprotege/backup
 
-  webprotege-linearization-service:
+  icatx-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.51
+    image: protegeproject/icatx-linearization-service:1.0.51
     ports:
       - '5011:5011'
     depends_on:
@@ -286,9 +287,9 @@ services:
       - webprotege-data-directory:/srv/webprotege
 
 
-  webprotege-postcoordination-service:
+  icatx-postcoordination-service:
     user: root
-    image: protegeproject/webprotege-postcoordination-service:1.0.42
+    image: protegeproject/icatx-postcoordination-service:1.0.42
     ports:
       - '5012:5012'
     depends_on:
