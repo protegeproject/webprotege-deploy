@@ -287,7 +287,7 @@ services:
 
   icatx-linearization-service:
     user: root
-    image: protegeproject/icatx-linearization-service:1.0.51
+    image: protegeproject/icatx-linearization-service:1.0.52
     depends_on:
       zipkin:
         condition: service_started
@@ -317,7 +317,7 @@ services:
 
   icatx-postcoordination-service:
     user: root
-    image: protegeproject/icatx-postcoordination-service:1.0.42
+    image: protegeproject/icatx-postcoordination-service:1.0.43
     depends_on:
       zipkin:
         condition: service_started
