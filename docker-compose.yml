@@ -289,7 +289,7 @@ services:
 
   icatx-postcoordination-service:
     user: root
-    image: protegeproject/icatx-postcoordination-service:1.0.42
+    image: protegeproject/icatx-postcoordination-service:1.0.43
     ports:
       - '5012:5012'
     depends_on:
