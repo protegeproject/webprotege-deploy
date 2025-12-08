@@ -332,7 +332,7 @@ services:
 
   icatx-linearization-service:
     user: root
-    image: protegeproject/icatx-linearization-service:1.0.51
+    image: protegeproject/icatx-linearization-service:1.0.52
     ports:
       - '5011:5011'
     depends_on:
