@@ -330,9 +330,9 @@ services:
     networks:
       - elk
 
-  webprotege-linearization-service:
+  icatx-linearization-service:
     user: root
-    image: protegeproject/webprotege-linearization-service:1.0.51
+    image: protegeproject/icatx-linearization-service:1.0.51
     ports:
       - '5011:5011'
     depends_on:
@@ -362,9 +362,9 @@ services:
     networks:
       - elk
 
-  webprotege-postcoordination-service:
+  icatx-postcoordination-service:
     user: root
-    image: protegeproject/webprotege-postcoordination-service:1.0.42
+    image: protegeproject/icatx-postcoordination-service:1.0.42
     ports:
       - '5012:5012'
     depends_on:
