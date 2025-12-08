@@ -5,9 +5,6 @@ services:
   rabbitmq:
     image: rabbitmq:management
     restart: "no"
-    ports:
-      - "5672:5672"
-      - "15672:15672"
     environment:
       - RABBITMQ_DEFAULT_USER=${RABBITMQ_DEFAULT_USER}
       - RABBITMQ_DEFAULT_PASS=${RABBITMQ_DEFAULT_PASS}
@@ -28,35 +25,6 @@ services:
       retries: 5
     networks:
       - elk
-
-#
-#  keycloak:
-#    image: alexsilaghi93/webprotege-keycloak:0.0.1
-#    command: [ "start-dev" ]
-#    ports:
-#      - 8080:8080
-#    depends_on:
-#      rabbitmq:
-#        condition: service_healthy
-#    environment:
-#      - KEYCLOAK_ADMIN=${KEYCLOAK_ADMIN}
-#      - KEYCLOAK_ADMIN_PASSWORD=${KEYCLOAK_ADMIN_PASSWORD}
-#      - KC_PROXY=edge
-#      - KC_LOG_LEVEL=INFO
-#      - KC_HTTP_RELATIVE_PATH=/keycloak-admin
-#      - KC_FEATURES=hostname
-#      - KC_THEME=webprotege
-#      - KC_THEME_LOGIN=webprotege
-#    volumes:
-#      - keycloak-h2-directory:/opt/keycloak/data
-#      - ./keycloak/webprotege.v2:/opt/keycloak/themes/webprotege.v2
-#    healthcheck:
-#      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak-admin", "--realm", "master", "--user", "${KEYCLOAK_ADMIN}", "--password", "${KEYCLOAK_ADMIN_PASSWORD}"]
-#      interval: 10s
-#      timeout: 5s
-#      retries: 10
-#    networks:
-#      - elk
 
   zipkin:
     image: openzipkin/zipkin
@@ -89,8 +57,6 @@ services:
         condition: service_healthy
       zipkin:
         condition: service_started
-    ports:
-      - '7777:7777'
     volumes:
       - ./certs/combined-truststore.jks:/opt/java/openjdk/lib/security/combined-truststore.jks:ro
     environment:
@@ -128,8 +94,6 @@ services:
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
-    ports:
-      - '5007:5007'
     volumes:
       - ./certs/combined-truststore.jks:/opt/java/openjdk/lib/security/combined-truststore.jks:ro
     environment:
@@ -156,8 +120,6 @@ services:
 
   webprotege-authorization-service:
     image: protegeproject/webprotege-authorization-service:3.0.21-WHO
-    ports:
-      - '5010:5010'
     depends_on:
       zipkin:
         condition: service_started
@@ -183,8 +145,6 @@ services:
 
   webprotege-user-management-service:
     image: protegeproject/webprotege-user-management-service:1.0.13-WHO
-    ports:
-      - '5009:5009'
     depends_on:
       zipkin:
         condition: service_started
@@ -211,8 +171,6 @@ services:
 
   webprotege-event-history-service:
     image: protegeproject/webprotege-event-history-service:2.0.24-WHO
-    ports:
-      - '5006:5006'
     depends_on:
       zipkin:
         condition: service_started
@@ -292,9 +250,6 @@ services:
   webprotege-backend-service:
     user: root
     image: protegeproject/webprotege-backend-service:4.2.49-WHO
-    ports:
-      - "5005:5005"  # For remote debugging
-      - "9010:9010"  # For JMX monitoring
     depends_on:
       zipkin:
         condition: service_started
@@ -333,8 +288,6 @@ services:
   icatx-linearization-service:
     user: root
     image: protegeproject/icatx-linearization-service:1.0.51
-    ports:
-      - '5011:5011'
     depends_on:
       zipkin:
         condition: service_started
@@ -365,8 +318,6 @@ services:
   icatx-postcoordination-service:
     user: root
     image: protegeproject/icatx-postcoordination-service:1.0.42
-    ports:
-      - '5012:5012'
     depends_on:
       zipkin:
         condition: service_started
@@ -397,9 +348,6 @@ services:
   icatx-versioning-service:
     user: root
     image: protegeproject/icatx-versioning-service:0.0.26
-    ports:
-      - '5013:5013'
-      - '7722:7722'
     depends_on:
       zipkin:
         condition: service_started
@@ -450,9 +398,6 @@ services:
   icatx-api-gateway:
     user: root
     image: protegeproject/icatx-api-gateway:0.0.114
-    ports:
-      - '5014:5014'
-      - '7779:7779'
     depends_on:
       zipkin:
         condition: service_started
