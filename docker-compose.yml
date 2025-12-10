@@ -346,7 +346,7 @@ services:
 
   icatx-versioning-service:
     user: root
-    image: protegeproject/icatx-versioning-service:0.0.26
+    image: protegeproject/icatx-versioning-service:0.0.27
     depends_on:
       zipkin:
         condition: service_started
