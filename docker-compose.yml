@@ -35,17 +35,21 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
-      - KEYCLOAK_ADMIN=admin
-      - KEYCLOAK_ADMIN_PASSWORD=password
-      - KC_PROXY=edge
-      - KC_LOG_LEVEL=DEBUG
-      - KC_HTTP_RELATIVE_PATH=/keycloak-admin
-      - KC_FEATURES=hostname
+      KC_PROXY_HEADERS: xforwarded
+      KC_HOSTNAME: webprotege-local.edu
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_RELATIVE_PATH: /keycloak
+      KC_HTTP_ENABLED: "true"
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: password
+      KC_PROXY: edge
+      KC_LOG_LEVEL: DEBUG
+      KC_FEATURES: hostname
     volumes:
       - keycloak-h2-directory:/opt/keycloak/data
       - ./keycloak:/tmp
     healthcheck:
-      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak-admin", "--realm", "master", "--user", "admin", "--password", "password"]
+      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak", "--realm", "master", "--user", "admin", "--password", "password"]
       interval: 10s
       timeout: 5s
       retries: 10
@@ -96,8 +100,8 @@ services:
       webprotege.minio.accessKey: webprotege
       webprotege.minio.secretKey: webprotege
       webprotege.minio.endPoint: http://minio:9000
-      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://webprotege-local.edu/keycloak-admin/realms/webprotege
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://webprotege-local.edu/keycloak-admin/realms/webprotege
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://webprotege-local.edu/keycloak/realms/webprotege
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://webprotege-local.edu/keycloak/realms/webprotege
       spring.servlet.multipart.max-file-size: 300MB
       spring.servlet.multipart.max-request-size: 300MB
       WEBPROTEGE_ALLOWEDORIGIN: http://${SERVER_HOST}
@@ -112,6 +116,8 @@ services:
         max-file: "3"
     networks:
       - elk
+    extra_hosts:
+      - "webprotege-local.edu:host-gateway"
 
 
   webprotege-gwt-ui-server:
@@ -127,7 +133,7 @@ services:
       minio.access.key: minioadmin
       minio.access.secret: minioadmin
       minio.endPoint: http://minio:9000
-      KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak-admin/
+      KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak/
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.websocketUrl: wss://${SERVER_HOST}/wsapps
       webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
@@ -148,7 +154,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:3.0.6
+    image: protegeproject/webprotege-authorization-service:3.0.8
     ports:
       - '5010:5010'
     depends_on:
@@ -167,7 +173,6 @@ services:
       spring.zipkin.baseUrl: http://zipkin:9411
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      KEYCLOAK_ISSUER_URL: ${JWK_SET_URI}
       _JAVA_OPTIONS: >
         -Xdebug
         -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
@@ -193,7 +198,7 @@ services:
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
-      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
+      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak
       webprotege.keycloak.clientSecret: ${ADMIN_CLI_SECRET}
       webprotege.keycloak.clientId: user-management
       LOGGING_LEVEL_ROOT: INFO
@@ -217,7 +222,7 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
-      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak-admin
+      webprotege.keycloak.serverUrl: http://${SERVER_HOST}/keycloak
       LOGGING_LEVEL_ROOT: INFO
       LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_DATA_MONGODB_CORE_MONGOTEMPLATE: INFO
       LOGGING_LEVEL_ORG_MONGODB_DRIVER: INFO
@@ -319,7 +324,7 @@ services:
     environment:
       - discovery.type=single-node
       - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
     ports:
       - "9200:9200"
     volumes:
