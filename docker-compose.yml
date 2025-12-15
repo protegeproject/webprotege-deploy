@@ -79,7 +79,7 @@ services:
       - elk
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:3.0.1
+    image: protegeproject/webprotege-gwt-api-gateway:3.0.2
     ports:
       - '5008:5008'
     depends_on:
@@ -121,7 +121,7 @@ services:
 
 
   webprotege-gwt-ui-server:
-    image: protegeproject/webprotege-gwt-ui-server:9.0.5
+    image: protegeproject/webprotege-gwt-ui-server:9.0.6
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
@@ -154,7 +154,7 @@ services:
 
 
   webprotege-authorization-service:
-    image: protegeproject/webprotege-authorization-service:3.0.8
+    image: protegeproject/webprotege-authorization-service:3.0.9
     ports:
       - '5010:5010'
     depends_on:
