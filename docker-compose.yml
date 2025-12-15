@@ -399,7 +399,7 @@ services:
       retries: 5
 
   nginx:
-    image: protegeproject/webprotege-nginx:1.2.2
+    image: protegeproject/webprotege-nginx:2.0.0
     hostname: ${SERVER_HOST}
     ports:
       - 80:80
