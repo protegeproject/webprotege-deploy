@@ -1232,7 +1232,7 @@
       "description": "Represents the WebProtégé UI",
       "rootUrl": "",
       "adminUrl": "",
-      "baseUrl": "http://keycloak:8080/keycloak-admin",
+      "baseUrl": "http://keycloak:8080/keycloak",
       "surrogateAuthRequired": false,
       "enabled": true,
       "alwaysDisplayInConsole": true,
@@ -2860,7 +2860,7 @@
     "oauth2DeviceCodeLifespan": "600",
     "parRequestUriLifespan": "60",
     "clientSessionMaxLifespan": "0",
-    "frontendUrl": "http://webprotege-local.edu/keycloak-admin",
+    "frontendUrl": "http://webprotege-local.edu/keycloak",
     "acr.loa.map": "{}",
     "adminEventsExpiration": "",
     "darkMode": "false"
