@@ -49,7 +49,7 @@ services:
       - elk
 
   webprotege-gwt-api-gateway:
-    image: protegeproject/webprotege-gwt-api-gateway:2.0.27-WHO
+    image: protegeproject/webprotege-gwt-api-gateway:2.0.28-WHO
     depends_on:
       minio:
         condition: service_started
