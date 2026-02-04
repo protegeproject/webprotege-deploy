@@ -27,7 +27,10 @@ services:
 
 
   keycloak:
-    image: keycloak/keycloak:26.1
+    build:
+      context: ./keycloak-theme
+      dockerfile: Dockerfile
+    image: webprotege-keycloak:latest
     command: [ "start-dev" ]
     ports:
       - 8080:8080

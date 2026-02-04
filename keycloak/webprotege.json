@@ -1280,7 +1280,7 @@
         "request.object.encryption.alg": "any",
         "client.introspection.response.allow.jwt.claim.enabled": "false",
         "saml.encrypt": "false",
-        "login_theme": "webprotege.v2",
+        "login_theme": "webprotege",
         "saml.server.signature": "false",
         "exclude.session.state.from.auth.response": "false",
         "saml.artifact.binding": "false",
@@ -1944,10 +1944,10 @@
     "strictTransportSecurity": "max-age=31536000; includeSubDomains"
   },
   "smtpServer": {},
-  "loginTheme": "webprotege.v2",
+  "loginTheme": "webprotege",
   "accountTheme": "keycloak.v3",
   "adminTheme": "keycloak.v2",
-  "emailTheme": "webprotege.v2",
+  "emailTheme": "webprotege",
   "eventsEnabled": true,
   "eventsListeners": [
     "jboss-logging"

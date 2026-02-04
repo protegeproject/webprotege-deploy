@@ -1,0 +1,380 @@
+/* ===== Reset & Base ===== */
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    background: #ffffff !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #333;
+}
+
+/* Override PatternFly login background */
+.login-pf body,
+body.wp-login-page {
+    background: #ffffff !important;
+    background-image: none !important;
+}
+
+/* ===== Sign up bar (top-right) ===== */
+.wp-signup-bar {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 100;
+}
+
+.wp-signup-btn {
+    display: inline-block;
+    padding: 10px 24px;
+    background: #e74c3c;
+    color: #ffffff;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.wp-signup-btn:hover {
+    background: #c0392b;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+/* ===== Main container ===== */
+.wp-login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: calc(100vh - 160px);
+    padding: 40px 20px 20px;
+}
+
+/* ===== Logo ===== */
+.wp-logo {
+    margin-bottom: 24px;
+    text-align: center;
+}
+
+.wp-logo img {
+    max-width: 280px;
+    height: auto;
+}
+
+/* ===== Heading ===== */
+.wp-heading {
+    font-size: 18px;
+    font-weight: 400;
+    color: #666;
+    margin: 0 0 32px 0;
+    text-align: center;
+}
+
+/* ===== Card ===== */
+.wp-card {
+    width: 100%;
+    max-width: 400px;
+    background: #ffffff;
+    border-left: 4px solid #7b4bab;
+    border-radius: 2px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    padding: 32px;
+    box-sizing: border-box;
+}
+
+.wp-card-header {
+    margin-bottom: 0;
+}
+
+.wp-card-body {
+    width: 100%;
+}
+
+.wp-card-info {
+    margin-top: 16px;
+    text-align: center;
+    font-size: 14px;
+    color: #666;
+}
+
+.wp-card-info a {
+    color: #7b4bab;
+    text-decoration: none;
+}
+
+.wp-card-info a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Show username (OTP pages) ===== */
+.wp-show-username {
+    margin-bottom: 16px;
+}
+
+.wp-username-display {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 14px;
+    color: #333;
+}
+
+.wp-restart-icon {
+    font-size: 18px;
+    color: #7b4bab;
+}
+
+/* ===== Required fields ===== */
+.wp-required-fields {
+    margin-bottom: 16px;
+    text-align: right;
+}
+
+.wp-required-fields .required {
+    color: #e74c3c;
+}
+
+/* ===== Alerts ===== */
+.wp-alert {
+    padding: 12px 16px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.wp-alert-error {
+    background: #fdecea;
+    color: #b71c1c;
+    border: 1px solid #f5c6cb;
+}
+
+.wp-alert-success {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+}
+
+.wp-alert-warning {
+    background: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ffe0b2;
+}
+
+.wp-alert-info {
+    background: #e3f2fd;
+    color: #1565c0;
+    border: 1px solid #bbdefb;
+}
+
+/* ===== Form ===== */
+.wp-form-group {
+    margin-bottom: 20px;
+}
+
+.wp-form-group:last-child {
+    margin-bottom: 0;
+}
+
+.wp-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+.wp-input {
+    display: block;
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 14px;
+    color: #333;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    transition: border-color 0.2s ease;
+}
+
+.wp-input:focus {
+    outline: none;
+    border-color: #7b4bab;
+    box-shadow: 0 0 0 2px rgba(123, 75, 171, 0.15);
+}
+
+.wp-input-error {
+    display: block;
+    margin-top: 4px;
+    font-size: 12px;
+    color: #b71c1c;
+}
+
+/* ===== Checkbox ===== */
+.wp-form-options {
+    margin-bottom: 24px;
+}
+
+.wp-checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    color: #555;
+    cursor: pointer;
+}
+
+.wp-checkbox-label input[type="checkbox"] {
+    accent-color: #7b4bab;
+}
+
+/* ===== Submit button ===== */
+.wp-submit-btn {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    background: #7b4bab;
+    color: #ffffff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.wp-submit-btn:hover {
+    background: #6a3d96;
+}
+
+.wp-submit-btn:active {
+    background: #5a3380;
+}
+
+/* ===== Logout message ===== */
+.wp-logout-message {
+    font-size: 20px;
+    font-weight: 400;
+    color: #333;
+    text-align: center;
+    margin: 0 0 24px 0;
+}
+
+/* ===== Forgot password ===== */
+.wp-forgot-password {
+    text-align: center;
+    margin-top: 16px;
+}
+
+.wp-forgot-password a {
+    color: #7b4bab;
+    font-size: 14px;
+    text-decoration: none;
+}
+
+.wp-forgot-password a:hover {
+    text-decoration: underline;
+}
+
+/* ===== Social providers ===== */
+.wp-social-providers {
+    margin-top: 20px;
+}
+
+.wp-social-providers hr {
+    border: none;
+    border-top: 1px solid #eee;
+    margin: 16px 0;
+}
+
+.wp-social-providers p {
+    text-align: center;
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+.wp-social-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.wp-social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    text-decoration: none;
+    color: #333;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.wp-social-link:hover {
+    background: #f5f5f5;
+}
+
+/* ===== Footer ===== */
+.wp-footer {
+    text-align: center;
+    padding: 24px 20px 32px;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.wp-footer p {
+    font-size: 12px;
+    color: #999;
+    line-height: 1.6;
+    margin: 0 0 8px 0;
+}
+
+.wp-footer-links {
+    margin-top: 12px;
+}
+
+.wp-footer-links a {
+    color: #999;
+    text-decoration: underline;
+}
+
+.wp-footer-links a:hover {
+    color: #666;
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 480px) {
+    .wp-login-container {
+        padding: 20px 16px 16px;
+    }
+
+    .wp-card {
+        padding: 24px 20px;
+    }
+
+    .wp-logo img {
+        max-width: 220px;
+    }
+
+    .wp-signup-bar {
+        position: static;
+        text-align: center;
+        padding: 12px;
+    }
+
+    .wp-signup-btn {
+        display: block;
+        text-align: center;
+    }
+
+    .wp-heading {
+        font-size: 16px;
+    }
+}
