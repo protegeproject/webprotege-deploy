@@ -316,7 +316,7 @@ services:
 
   icatx-postcoordination-service:
     user: root
-    image: protegeproject/icatx-postcoordination-service:1.0.47
+    image: protegeproject/icatx-postcoordination-service:1.0.48
     depends_on:
       zipkin:
         condition: service_started
