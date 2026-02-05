@@ -286,7 +286,7 @@ services:
 
   icatx-linearization-service:
     user: root
-    image: protegeproject/icatx-linearization-service:1.0.53
+    image: protegeproject/icatx-linearization-service:1.0.54
     depends_on:
       zipkin:
         condition: service_started
