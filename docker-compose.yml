@@ -27,7 +27,7 @@ services:
 
 
   keycloak:
-    image: keycloak/keycloak:26.1
+    image: protegeproject/webprotege-keycloak:1.1.0
     command: [ "start-dev" ]
     ports:
       - 8080:8080
