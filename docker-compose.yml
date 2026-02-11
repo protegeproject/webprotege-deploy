@@ -459,6 +459,19 @@ services:
       - elk
 
 
+  elasticsearch-init:
+    image: curlimages/curl:latest
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    volumes:
+      - ./elasticsearch/init:/init:ro
+    environment:
+      - ELASTICSEARCH_HOST=http://elasticsearch:9200
+    command: ["sh", "/init/init-ilm.sh"]
+    networks:
+      - elk
+
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
     environment:

@@ -1,0 +1,41 @@
+{
+  "index_patterns": ["webprotege-logs-*"],
+  "template": {
+    "settings": {
+      "index.lifecycle.name": "webprotege-logs-policy",
+      "index.number_of_shards": 1,
+      "index.number_of_replicas": 1,
+      "index.refresh_interval": "5s"
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp": {
+          "type": "date"
+        },
+        "service_name": {
+          "type": "keyword"
+        },
+        "log_level": {
+          "type": "keyword"
+        },
+        "logger": {
+          "type": "keyword"
+        },
+        "log_message": {
+          "type": "text"
+        },
+        "thread": {
+          "type": "keyword"
+        },
+        "correlationId": {
+          "type": "keyword"
+        },
+        "message": {
+          "type": "text"
+        }
+      }
+    }
+  },
+  "priority": 200,
+  "composed_of": []
+}
