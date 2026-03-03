@@ -248,7 +248,7 @@ services:
 
   webprotege-backend-service:
     user: root
-    image: protegeproject/webprotege-backend-service:4.2.64-WHO
+    image: protegeproject/webprotege-backend-service:4.2.65-WHO
     depends_on:
       zipkin:
         condition: service_started
