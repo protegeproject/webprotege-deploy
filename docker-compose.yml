@@ -396,7 +396,7 @@ services:
 
   icatx-api-gateway:
     user: root
-    image: protegeproject/icatx-api-gateway:0.0.121
+    image: protegeproject/icatx-api-gateway:0.0.122
     depends_on:
       zipkin:
         condition: service_started
