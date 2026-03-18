@@ -4,7 +4,7 @@ This repository houses docker compose and related files for running WebProtégé
 
 For a basic Docker Compose file see [docker-compose.yml](https://github.com/protegeproject/webprotege-deploy/blob/main/docker-compose.yml).
 
-For a Keycloak configuration file see [keycloak/webprotege.json](https://github.com/protegeproject/webprotege-deploy/blob/main/keycloak/webprotege.json)
+For a Keycloak configuration file see [webprotege.json](https://github.com/protegeproject/webprotege-keycloak/blob/main/webprotege.json) in the [webprotege-keycloak](https://github.com/protegeproject/webprotege-keycloak) repository
 
 add in etc/hosts 127.0.0.1  webprotege-local.edu
 
@@ -147,7 +147,7 @@ A "realm" in Keycloak is a security domain that manages users, credentials, and 
 1. In the left sidebar, hover over the realm dropdown (likely showing "Master")
 2. Click "Create Realm" or "Add realm"
 3. Choose "Import" or "Browse" option
-4. Navigate to and select the `keycloak/webprotege.json` file from your webprotege-deploy directory
+4. Navigate to and select the `webprotege.json` file from the `webprotege-keycloak` repository (located at `../webprotege-keycloak/webprotege.json` relative to this deploy directory)
 5. Click "Create" or "Import"
 
 **What this configuration includes:**
