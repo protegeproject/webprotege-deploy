@@ -1,22 +1,14 @@
 # webprotege-deploy
 
-This repository houses docker compose and related files for running WebProtégé.  
+Docker Compose configuration for running WebProtege.
 
-For a basic Docker Compose file see [docker-compose.yml](https://github.com/protegeproject/webprotege-deploy/blob/main/docker-compose.yml).
+## Running WebProtege for the First Time
 
-For a Keycloak configuration file see [webprotege.json](https://github.com/protegeproject/webprotege-keycloak/blob/main/webprotege.json) in the [webprotege-keycloak](https://github.com/protegeproject/webprotege-keycloak) repository
-
-add in etc/hosts 127.0.0.1  webprotege-local.edu
-
-## Running WebProtégé for the First Time
-
-This guide will walk you through setting up WebProtégé using Docker.
-
-### Prerequisites and Initial Setup
+### Prerequisites
 
 #### 1. Verify Docker Daemon is Running
 
-Before beginning, ensure that the Docker daemon is active on your system. The Docker daemon is the background service that manages Docker containers and images.
+Before beginning, ensure that the Docker daemon is active on your system.
 
 **On macOS/Linux:**
 ```bash
@@ -32,7 +24,7 @@ If Docker isn't running, start it through Docker Desktop or your system's servic
 
 #### 2. Configure Local Host Resolution
 
-WebProtégé requires a custom local domain for proper operation. You'll need to modify your system's hosts file to redirect the custom domain to your local machine.
+WebProtege requires a custom local domain for proper operation. You'll need to modify your system's hosts file to redirect the custom domain to your local machine.
 
 **Location of hosts file:**
 - **Linux/macOS:** `/etc/hosts`
@@ -43,7 +35,7 @@ WebProtégé requires a custom local domain for proper operation. You'll need to
    - **Linux/macOS:** `sudo nano /etc/hosts` or `sudo vim /etc/hosts`
    - **Windows:** Run Notepad as Administrator, then open the hosts file
 
-2. Add this exact line at the end of the file:
+2. Add these lines at the end of the file:
    ```
    127.0.0.1  webprotege-local.edu
    127.0.0.1  webprotege-events-history-service
@@ -52,11 +44,9 @@ WebProtégé requires a custom local domain for proper operation. You'll need to
 
 **What this does:** This configuration tells your computer that when any application tries to access `webprotege-local.edu`, it should connect to `127.0.0.1` (localhost) instead of trying to resolve it through DNS.
 
-### Docker Environment Setup
+#### 3. Navigate to Project Directory and Set Environment Variable
 
-#### 3. Navigate to Project Directory
-
-Open a terminal or command prompt and change to your local `webprotege-deploy` directory. This directory should contain the Docker Compose configuration files necessary for running WebProtégé.
+Open a terminal and change to your local `webprotege-deploy` directory:
 
 ```bash
 cd /path/to/your/webprotege-deploy
@@ -66,9 +56,7 @@ cd /path/to/your/webprotege-deploy
 - **macOS/Linux:** `cd ~/Projects/webprotege-deploy`
 - **Windows:** `cd C:\Users\YourUsername\Documents\webprotege-deploy`
 
-#### 4. Set Environment Variable
-
-Configure the `SERVER_HOST` environment variable to match the custom domain you added to your hosts file. This tells WebProtégé which hostname to expect for incoming requests.
+Configure the `SERVER_HOST` environment variable:
 
 **Linux/macOS (Bash/Zsh):**
 ```bash
@@ -85,94 +73,161 @@ $env:SERVER_HOST = "webprotege-local.edu"
 set SERVER_HOST=webprotege-local.edu
 ```
 
-**Note:** This environment variable is temporary and only applies to your current terminal session. For permanent configuration, you can add it to your shell profile or use a `.env` file if supported by your Docker Compose setup.
+**Note:** This environment variable is temporary and only applies to your current terminal session. For permanent configuration, add it to your shell profile or use a `.env` file.
 
-### Keycloak Authentication Setup
+### Keycloak Setup
 
-WebProtégé uses Keycloak as its identity and access management solution. Keycloak must be configured before starting the main WebProtégé services.
+#### 4. Build the Keycloak Plugin
 
-#### 5. Start Keycloak Service
-
-Launch only the Keycloak service initially to configure authentication before starting other services:
+The authenticator plugin in `webprotege-keycloak` must be built before deploying Keycloak:
 
 ```bash
-docker compose up keycloak -d
+cd ../webprotege-keycloak/spi && mvn clean package && cd -
 ```
 
-**Command breakdown:**
-- `docker compose up`: Starts services defined in docker-compose.yml
-- `keycloak`: Specifies only the keycloak service
-- `-d`: Runs in detached mode (background), freeing up your terminal
+#### 5. Delete the Keycloak H2 Database Volume (Fresh Deploy Only)
 
-**Expected output:**
-```
-[+] Running 1/1
- ✔ Container webprotege-deploy-keycloak-1  Started
-```
+Skip this step if deploying for the first time. For redeployments, this forces
+Keycloak to start with a fresh database so the realm is re-imported cleanly.
 
-Wait a few moments for Keycloak to fully initialize. You can check the logs with:
 ```bash
-docker compose logs keycloak
+docker volume rm webprotege-deploy_keycloak-h2-directory
 ```
 
-#### 6. Access Keycloak Admin Interface
+#### 6. Rebuild and Start Keycloak
 
-Open your web browser and navigate to:
+```bash
+docker compose build keycloak
+docker compose up -d keycloak
 ```
-http://localhost:8080
+
+Wait for Keycloak to become healthy:
+
+```bash
+docker compose logs -f keycloak
 ```
 
-You should see the Keycloak administration console welcome page. If you see an error or connection refused message, wait a bit longer for Keycloak to finish starting up.
+Look for `Keycloak ... started in X.Xs`. Press Ctrl+C to stop following logs.
 
-**Troubleshooting:**
-- If the page doesn't load, check that Keycloak is running: `docker compose ps`
-- Review logs for errors: `docker compose logs keycloak`
+#### 7. Import the Realm Configuration
 
-#### 7. Sign Into Keycloak Admin
+The `webprotege.json` file is mounted at `/tmp/webprotege.json` inside the container
+(via the `../webprotege-keycloak:/tmp` volume mapping in docker-compose.yml).
 
-Use the default administrator credentials to access the Keycloak admin console:
+```bash
+docker compose exec keycloak /opt/keycloak/bin/kcadm.sh config credentials \
+  --server http://localhost:8080/keycloak --realm master --user admin --password password
 
-- **Username:** `admin`
-- **Password:** `password`
+docker compose exec keycloak /opt/keycloak/bin/kcadm.sh create realms \
+  -f /tmp/webprotege.json
+```
 
-**Security Note:** These are default credentials for local development. In a production environment, you should immediately change these credentials and use strong, unique passwords.
+#### 8. Configure the `preferred_username` Protocol Mapper
 
-Once logged in, you'll see the Keycloak administration dashboard with options to manage realms, users, and authentication settings.
+The realm import does not preserve protocol mapper config for certain mapper types.
+The `username` mapper in the `profile` scope (which maps `preferred_username` in the JWT)
+must be recreated manually via the Admin CLI.
 
-#### 8. Import WebProtégé Realm Configuration
+**8a.** Find the `profile` scope ID:
 
-A "realm" in Keycloak is a security domain that manages users, credentials, and roles for a specific application or set of applications.
+```bash
+docker compose exec keycloak /opt/keycloak/bin/kcadm.sh get client-scopes \
+  -r webprotege --fields id,name
+```
 
-**Steps to import:**
-1. In the left sidebar, hover over the realm dropdown (likely showing "Master")
-2. Click "Create Realm" or "Add realm"
-3. Choose "Import" or "Browse" option
-4. Navigate to and select the `webprotege.json` file from the `webprotege-keycloak` repository (located at `../webprotege-keycloak/webprotege.json` relative to this deploy directory)
-5. Click "Create" or "Import"
+Example output (look for the `profile` entry):
 
-**What this configuration includes:**
-- WebProtégé client configuration
-- Required authentication flows
-- User roles and permissions
-- Login themes and settings
+```
+...
+{
+  "id" : "7e5f9070-523f-4081-af70-a2595e5f2910",
+  "name" : "profile"
+},
+...
+```
 
-After importing, you should see "webprotege" appear in the realm dropdown, indicating successful configuration.
+**8b.** Find the `username` mapper ID within that scope.
+Replace `<PROFILE_SCOPE_ID>` with the ID from above (e.g., `7e5f9070-523f-4081-af70-a2595e5f2910`):
 
-### Launch WebProtégé Services
+```bash
+docker compose exec keycloak /opt/keycloak/bin/kcadm.sh get \
+  client-scopes/<PROFILE_SCOPE_ID>/protocol-mappers/models \
+  -r webprotege --fields id,name
+```
 
-#### 9. Start All WebProtégé Services
+Example output (look for the `username` entry):
 
-**Important for macOS users:** Before starting the services, you need to modify the Docker Compose configuration to avoid port conflicts. macOS uses port 5000 for AirPlay Receiver by default.
+```
+...
+{
+  "id" : "741dbb53-3cda-4a25-a7c8-6e18ea5f163d",
+  "name" : "username"
+},
+...
+```
 
-**Port modification steps:**
-1. Open the `docker-compose.yml` file in a text editor
-2. Navigate to approximately line 320-321 in the logstash section
-3. Change the port mapping from `5000:5000` to `5001:5000` (or any other 500x port like 5002, 5003, etc.)
-4. Save the file
+**8c.** Delete the existing `username` mapper.
+Replace `<PROFILE_SCOPE_ID>` and `<USERNAME_MAPPER_ID>` with the IDs from above:
+
+```bash
+docker compose exec keycloak /opt/keycloak/bin/kcadm.sh delete \
+  client-scopes/<PROFILE_SCOPE_ID>/protocol-mappers/models/<USERNAME_MAPPER_ID> \
+  -r webprotege
+```
+
+**8d.** Create the new mapper that maps `mongo_id` to `preferred_username`.
+The command will output the new mapper ID (e.g., `Created new model with id '...'`):
+
+```bash
+docker compose exec keycloak /opt/keycloak/bin/kcadm.sh create \
+  client-scopes/<PROFILE_SCOPE_ID>/protocol-mappers/models \
+  -r webprotege \
+  -s name=username \
+  -s protocol=openid-connect \
+  -s protocolMapper=oidc-usermodel-attribute-mapper \
+  -s consentRequired=false \
+  -s 'config."user.attribute"=mongo_id' \
+  -s 'config."id.token.claim"=true' \
+  -s 'config."access.token.claim"=true' \
+  -s 'config."claim.name"=preferred_username' \
+  -s 'config."jsonType.label"=String' \
+  -s 'config."userinfo.token.claim"=true'
+```
+
+This maps the Keycloak user attribute `mongo_id` to the `preferred_username` JWT claim,
+allowing email addresses as Keycloak usernames while preserving the original MongoDB user ID
+for internal application lookups.
+
+#### 9. Verify the Mapper
+
+Use the mapper ID returned from the create command in Step 8d.
+Replace `<PROFILE_SCOPE_ID>` and `<NEW_MAPPER_ID>` accordingly:
+
+```bash
+docker compose exec keycloak /opt/keycloak/bin/kcadm.sh get \
+  client-scopes/<PROFILE_SCOPE_ID>/protocol-mappers/models/<NEW_MAPPER_ID> \
+  -r webprotege
+```
+
+> **Note:** Listing all mappers with `--fields config` shows empty config objects due to
+> a kcadm.sh display bug in Keycloak 26.x. Always query a single mapper by ID to see the full config.
+
+Confirm the output shows `"protocolMapper": "oidc-usermodel-attribute-mapper"`,
+`"user.attribute": "mongo_id"`, and `"claim.name": "preferred_username"`.
+
+### Launch WebProtege
+
+#### 10. Start All Services
+
+**Important for macOS users:** Before starting the services, macOS uses port 5000 for AirPlay Receiver by default, which conflicts with Logstash. You need to modify the Docker Compose configuration:
+
+1. Open `docker-compose.yml` in a text editor
+2. Find the Logstash port mapping for port 5000
+3. Change the host port from `5000` to `5001` (or any other available port)
 
 **Example change:**
 ```yaml
-# Before (line 320-321):
+# Before:
 ports:
   - "5000:5000/tcp"
   - "5000:5000/udp"
@@ -183,79 +238,72 @@ ports:
   - "5001:5000/udp"
 ```
 
-Now that Keycloak is configured, start the complete WebProtégé application stack:
+Now start all services:
 
 ```bash
-docker compose up
+docker compose up -d
 ```
 
-**What this command does:**
-- Starts all services defined in the Docker Compose file
-- Includes the database, backend services, frontend, and any other required components
-- Runs in foreground mode, showing logs from all services
+#### 11. Access WebProtege
 
-**Startup time:** Initial startup may take several minutes as Docker downloads images and initializes databases. Watch the logs for "ready" or "started" messages from each service.
+Open your browser and go to:
 
-### Access and Account Setup
-
-#### 10. Navigate to WebProtégé Application
-
-Open your web browser and go to:
 ```
 http://webprotege-local.edu
 ```
 
-**Important:** Use the custom domain you configured in your hosts file, not `localhost`. This ensures proper cookie handling and authentication flow between WebProtégé and Keycloak.
+Use the custom domain (not `localhost`) to ensure proper cookie handling and
+authentication flow between WebProtege and Keycloak.
 
-You should see the WebProtégé sign-in page with options to log in or register a new account.
+#### 12. Register a New User Account
 
-#### 11. Register a New User Account
-
-Since this is your first time using WebProtégé, create a new account:
+Since this is your first time using WebProtege, create a new account:
 
 1. Click "Register" on the login page
 2. Fill out the registration form with:
-   - **Username:** Choose a unique username (e.g., your email or preferred handle)
+   - **Email:** Your email address
    - **Password:** A strong password following any displayed requirements
    - **Confirm Password:** Re-enter your password
-   - **Email:** Your email address (required for account verification and notifications)
-   - **First/Last Name:** Your display name within WebProtégé
-
+   - **First/Last Name:** Your display name within WebProtege
 3. Click "Register"
 
-#### 12. Sign Into Your New Account
+#### 13. Sign Into Your New Account
 
 After registration, sign in using your newly created credentials:
 
-1. Enter your username/email and password
+1. Enter your email and password
 2. Click "Sign In"
 
 **Successful login indicators:**
-- Redirect to the WebProtégé home page
-- Your username appears in the top navigation
+- Redirect to the WebProtege home page
+- Your name appears in the top navigation
 - You see options to create or access ontology projects
 
-### Verification and Next Steps
+### Verification
 
-After completing these steps, you should see the WebProtégé home page, which typically includes:
+After logging in, you should see the WebProtege home page with options to
+create or access ontology projects.
 
-- **Project dashboard:** View and manage your ontology projects
-- **Create project button:** Start new ontology development projects
-- **User profile access:** Manage your account settings
-- **Navigation menu:** Access different WebProtégé features
+To verify the `mongo_id` mapper is working correctly, check the backend logs:
 
-**Common next steps:**
-- Create your first ontology project
-- Import existing ontology files
-- Explore WebProtégé documentation and tutorials
-- Configure project-specific settings and collaborator access
+```bash
+docker compose logs webprotege-backend-service | grep "from user"
+```
 
-### Troubleshooting Common Issues
+The userId should show the `mongo_id` value (e.g., `johardi`), not the email address.
+
+### Troubleshooting
 
 **Port conflicts:** If port 8080 is already in use, modify the Docker Compose configuration to use alternative ports.
 
 **Permission errors:** Ensure your user has permissions to modify the hosts file and run Docker commands.
 
-**Service startup failures:** Check Docker logs for specific error messages and ensure all required files are present in the webprotege-deploy directory.
+**Service startup failures:** Check Docker logs for specific error messages: `docker compose logs <service-name>`
 
-**Authentication issues:** Verify the realm was imported correctly in Keycloak and that the SERVER_HOST environment variable matches your hosts file entry.
+**Authentication issues:** Verify the realm was imported correctly and that `SERVER_HOST` matches your hosts file entry.
+
+## SMTP Configuration
+
+WebProtege requires an SMTP server for the migrated user password reset flow. In development,
+Mailpit is included in docker-compose.yml. The SMTP settings are defined in the realm JSON
+(`webprotege.json`) under `smtpServer`.
