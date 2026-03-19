@@ -25,9 +25,7 @@ services:
 
 
   keycloak:
-    build:
-      context: ../webprotege-keycloak
-      dockerfile: Dockerfile
+    image: protegeproject/webprotege-keycloak:1.0.0
     command: [ "start-dev" ]
     ports:
       - 8080:8080
@@ -47,7 +45,6 @@ services:
       KC_FEATURES: hostname
     volumes:
       - keycloak-h2-directory:/opt/keycloak/data
-      - ../webprotege-keycloak:/tmp
     healthcheck:
       test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak", "--realm", "master", "--user", "admin", "--password", "password"]
       interval: 10s

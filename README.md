@@ -77,15 +77,7 @@ set SERVER_HOST=webprotege-local.edu
 
 ### Keycloak Setup
 
-#### 4. Build the Keycloak Plugin
-
-The authenticator plugin in `webprotege-keycloak` must be built before deploying Keycloak:
-
-```bash
-cd ../webprotege-keycloak/spi && mvn clean package && cd -
-```
-
-#### 5. Delete the Keycloak H2 Database Volume (Fresh Deploy Only)
+#### 4. Delete the Keycloak H2 Database Volume (Fresh Deploy Only)
 
 Skip this step if deploying for the first time. For redeployments, this forces
 Keycloak to start with a fresh database so the realm is re-imported cleanly.
@@ -94,10 +86,13 @@ Keycloak to start with a fresh database so the realm is re-imported cleanly.
 docker volume rm webprotege-deploy_keycloak-h2-directory
 ```
 
-#### 6. Rebuild and Start Keycloak
+#### 5. Start Keycloak
+
+The Keycloak image is pre-built and published to Docker Hub as
+`protegeproject/webprotege-keycloak`. It includes the custom login theme,
+the authenticator plugin, and the realm configuration.
 
 ```bash
-docker compose build keycloak
 docker compose up -d keycloak
 ```
 
@@ -109,26 +104,26 @@ docker compose logs -f keycloak
 
 Look for `Keycloak ... started in X.Xs`. Press Ctrl+C to stop following logs.
 
-#### 7. Import the Realm Configuration
+#### 6. Import the Realm Configuration
 
-The `webprotege.json` file is mounted at `/tmp/webprotege.json` inside the container
-(via the `../webprotege-keycloak:/tmp` volume mapping in docker-compose.yml).
+The `webprotege.json` realm file is baked into the Docker image at
+`/opt/keycloak/import/webprotege.json`.
 
 ```bash
 docker compose exec keycloak /opt/keycloak/bin/kcadm.sh config credentials \
   --server http://localhost:8080/keycloak --realm master --user admin --password password
 
 docker compose exec keycloak /opt/keycloak/bin/kcadm.sh create realms \
-  -f /tmp/webprotege.json
+  -f /opt/keycloak/import/webprotege.json
 ```
 
-#### 8. Configure the `preferred_username` Protocol Mapper
+#### 7. Configure the `preferred_username` Protocol Mapper
 
 The realm import does not preserve protocol mapper config for certain mapper types.
 The `username` mapper in the `profile` scope (which maps `preferred_username` in the JWT)
 must be recreated manually via the Admin CLI.
 
-**8a.** Find the `profile` scope ID:
+**7a.** Find the `profile` scope ID:
 
 ```bash
 docker compose exec keycloak /opt/keycloak/bin/kcadm.sh get client-scopes \
@@ -146,7 +141,7 @@ Example output (look for the `profile` entry):
 ...
 ```
 
-**8b.** Find the `username` mapper ID within that scope.
+**7b.** Find the `username` mapper ID within that scope.
 Replace `<PROFILE_SCOPE_ID>` with the ID from above (e.g., `7e5f9070-523f-4081-af70-a2595e5f2910`):
 
 ```bash
@@ -166,7 +161,7 @@ Example output (look for the `username` entry):
 ...
 ```
 
-**8c.** Delete the existing `username` mapper.
+**7c.** Delete the existing `username` mapper.
 Replace `<PROFILE_SCOPE_ID>` and `<USERNAME_MAPPER_ID>` with the IDs from above:
 
 ```bash
@@ -175,7 +170,7 @@ docker compose exec keycloak /opt/keycloak/bin/kcadm.sh delete \
   -r webprotege
 ```
 
-**8d.** Create the new mapper that maps `mongo_id` to `preferred_username`.
+**7d.** Create the new mapper that maps `mongo_id` to `preferred_username`.
 The command will output the new mapper ID (e.g., `Created new model with id '...'`):
 
 ```bash
@@ -198,9 +193,9 @@ This maps the Keycloak user attribute `mongo_id` to the `preferred_username` JWT
 allowing email addresses as Keycloak usernames while preserving the original MongoDB user ID
 for internal application lookups.
 
-#### 9. Verify the Mapper
+#### 8. Verify the Mapper
 
-Use the mapper ID returned from the create command in Step 8d.
+Use the mapper ID returned from the create command in Step 7d.
 Replace `<PROFILE_SCOPE_ID>` and `<NEW_MAPPER_ID>` accordingly:
 
 ```bash
@@ -217,7 +212,7 @@ Confirm the output shows `"protocolMapper": "oidc-usermodel-attribute-mapper"`,
 
 ### Launch WebProtege
 
-#### 10. Start All Services
+#### 9. Start All Services
 
 **Important for macOS users:** Before starting the services, macOS uses port 5000 for AirPlay Receiver by default, which conflicts with Logstash. You need to modify the Docker Compose configuration:
 
@@ -244,7 +239,7 @@ Now start all services:
 docker compose up -d
 ```
 
-#### 11. Access WebProtege
+#### 10. Access WebProtege
 
 Open your browser and go to:
 
@@ -255,7 +250,7 @@ http://webprotege-local.edu
 Use the custom domain (not `localhost`) to ensure proper cookie handling and
 authentication flow between WebProtege and Keycloak.
 
-#### 12. Register a New User Account
+#### 11. Register a New User Account
 
 Since this is your first time using WebProtege, create a new account:
 
@@ -267,7 +262,7 @@ Since this is your first time using WebProtege, create a new account:
    - **First/Last Name:** Your display name within WebProtege
 3. Click "Register"
 
-#### 13. Sign Into Your New Account
+#### 12. Sign Into Your New Account
 
 After registration, sign in using your newly created credentials:
 
