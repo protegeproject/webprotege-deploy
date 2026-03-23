@@ -123,59 +123,40 @@ The realm import does not preserve protocol mapper config for certain mapper typ
 The `username` mapper in the `profile` scope (which maps `preferred_username` in the JWT)
 must be recreated manually via the Admin CLI.
 
-**7a.** Find the `profile` scope ID:
+The commands below use `jq` to automatically capture IDs into shell variables,
+so no manual copy-paste is needed. Make sure `jq` is installed (`brew install jq`
+on macOS, `apt install jq` on Debian/Ubuntu).
+
+**7a.** Find the `profile` scope ID and store it:
 
 ```bash
-docker compose exec keycloak /opt/keycloak/bin/kcadm.sh get client-scopes \
-  -r webprotege --fields id,name
+PROFILE_SCOPE_ID=$(docker compose exec -T keycloak /opt/keycloak/bin/kcadm.sh get client-scopes \
+  -r webprotege --fields id,name | jq -r '.[] | select(.name == "profile") | .id')
+echo "Profile scope ID: $PROFILE_SCOPE_ID"
 ```
 
-Example output (look for the `profile` entry):
-
-```
-...
-{
-  "id" : "7e5f9070-523f-4081-af70-a2595e5f2910",
-  "name" : "profile"
-},
-...
-```
-
-**7b.** Find the `username` mapper ID within that scope.
-Replace `<PROFILE_SCOPE_ID>` with the ID from above (e.g., `7e5f9070-523f-4081-af70-a2595e5f2910`):
+**7b.** Find the `username` mapper ID within that scope and store it:
 
 ```bash
-docker compose exec keycloak /opt/keycloak/bin/kcadm.sh get \
-  client-scopes/<PROFILE_SCOPE_ID>/protocol-mappers/models \
-  -r webprotege --fields id,name
+USERNAME_MAPPER_ID=$(docker compose exec -T keycloak /opt/keycloak/bin/kcadm.sh get \
+  "client-scopes/$PROFILE_SCOPE_ID/protocol-mappers/models" \
+  -r webprotege --fields id,name | jq -r '.[] | select(.name == "username") | .id')
+echo "Username mapper ID: $USERNAME_MAPPER_ID"
 ```
 
-Example output (look for the `username` entry):
-
-```
-...
-{
-  "id" : "741dbb53-3cda-4a25-a7c8-6e18ea5f163d",
-  "name" : "username"
-},
-...
-```
-
-**7c.** Delete the existing `username` mapper.
-Replace `<PROFILE_SCOPE_ID>` and `<USERNAME_MAPPER_ID>` with the IDs from above:
+**7c.** Delete the existing `username` mapper:
 
 ```bash
 docker compose exec keycloak /opt/keycloak/bin/kcadm.sh delete \
-  client-scopes/<PROFILE_SCOPE_ID>/protocol-mappers/models/<USERNAME_MAPPER_ID> \
+  "client-scopes/$PROFILE_SCOPE_ID/protocol-mappers/models/$USERNAME_MAPPER_ID" \
   -r webprotege
 ```
 
-**7d.** Create the new mapper that maps `mongo_id` to `preferred_username`.
-The command will output the new mapper ID (e.g., `Created new model with id '...'`):
+**7d.** Create the new mapper that maps `mongo_id` to `preferred_username`:
 
 ```bash
 docker compose exec keycloak /opt/keycloak/bin/kcadm.sh create \
-  client-scopes/<PROFILE_SCOPE_ID>/protocol-mappers/models \
+  "client-scopes/$PROFILE_SCOPE_ID/protocol-mappers/models" \
   -r webprotege \
   -s name=username \
   -s protocol=openid-connect \
@@ -195,12 +176,13 @@ for internal application lookups.
 
 #### 8. Verify the Mapper
 
-Use the mapper ID returned from the create command in Step 7d.
-Replace `<PROFILE_SCOPE_ID>` and `<NEW_MAPPER_ID>` accordingly:
-
 ```bash
+NEW_MAPPER_ID=$(docker compose exec -T keycloak /opt/keycloak/bin/kcadm.sh get \
+  "client-scopes/$PROFILE_SCOPE_ID/protocol-mappers/models" \
+  -r webprotege --fields id,name | jq -r '.[] | select(.name == "username") | .id')
+
 docker compose exec keycloak /opt/keycloak/bin/kcadm.sh get \
-  client-scopes/<PROFILE_SCOPE_ID>/protocol-mappers/models/<NEW_MAPPER_ID> \
+  "client-scopes/$PROFILE_SCOPE_ID/protocol-mappers/models/$NEW_MAPPER_ID" \
   -r webprotege
 ```
 
