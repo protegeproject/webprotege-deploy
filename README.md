@@ -152,7 +152,7 @@ docker compose exec keycloak /opt/keycloak/bin/kcadm.sh delete \
   -r webprotege
 ```
 
-**7d.** Create the new mapper that maps `mongo_id` to `preferred_username`:
+**7d.** Create the new mapper that maps `webprotege_username` to `preferred_username`:
 
 ```bash
 docker compose exec keycloak /opt/keycloak/bin/kcadm.sh create \
@@ -162,7 +162,7 @@ docker compose exec keycloak /opt/keycloak/bin/kcadm.sh create \
   -s protocol=openid-connect \
   -s protocolMapper=oidc-usermodel-attribute-mapper \
   -s consentRequired=false \
-  -s 'config."user.attribute"=mongo_id' \
+  -s 'config."user.attribute"=webprotege_username' \
   -s 'config."id.token.claim"=true' \
   -s 'config."access.token.claim"=true' \
   -s 'config."claim.name"=preferred_username' \
@@ -170,7 +170,7 @@ docker compose exec keycloak /opt/keycloak/bin/kcadm.sh create \
   -s 'config."userinfo.token.claim"=true'
 ```
 
-This maps the Keycloak user attribute `mongo_id` to the `preferred_username` JWT claim,
+This maps the Keycloak user attribute `webprotege_username` to the `preferred_username` JWT claim,
 allowing email addresses as Keycloak usernames while preserving the original MongoDB user ID
 for internal application lookups.
 
@@ -190,7 +190,7 @@ docker compose exec keycloak /opt/keycloak/bin/kcadm.sh get \
 > a kcadm.sh display bug in Keycloak 26.x. Always query a single mapper by ID to see the full config.
 
 Confirm the output shows `"protocolMapper": "oidc-usermodel-attribute-mapper"`,
-`"user.attribute": "mongo_id"`, and `"claim.name": "preferred_username"`.
+`"user.attribute": "webprotege_username"`, and `"claim.name": "preferred_username"`.
 
 ### Launch WebProtege
 
@@ -261,13 +261,13 @@ After registration, sign in using your newly created credentials:
 After logging in, you should see the WebProtege home page with options to
 create or access ontology projects.
 
-To verify the `mongo_id` mapper is working correctly, check the backend logs:
+To verify the `webprotege_username` mapper is working correctly, check the backend logs:
 
 ```bash
 docker compose logs webprotege-backend-service | grep "from user"
 ```
 
-The userId should show the `mongo_id` value (e.g., `johardi`), not the email address.
+The userId should show the `webprotege_username` value (e.g., `johardi`), not the email address.
 
 ### Troubleshooting
 
