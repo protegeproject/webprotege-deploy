@@ -196,26 +196,7 @@ Confirm the output shows `"protocolMapper": "oidc-usermodel-attribute-mapper"`,
 
 #### 9. Start All Services
 
-**Important for macOS users:** Before starting the services, macOS uses port 5000 for AirPlay Receiver by default, which conflicts with Logstash. You need to modify the Docker Compose configuration:
-
-1. Open `docker-compose.yml` in a text editor
-2. Find the Logstash port mapping for port 5000
-3. Change the host port from `5000` to `5001` (or any other available port)
-
-**Example change:**
-```yaml
-# Before:
-ports:
-  - "5000:5000/tcp"
-  - "5000:5000/udp"
-
-# After:
-ports:
-  - "5001:5000/tcp"
-  - "5001:5000/udp"
-```
-
-Now start all services:
+Start all services:
 
 ```bash
 docker compose up -d
