@@ -40,6 +40,7 @@ services:
       KC_HTTP_ENABLED: "true"
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: password
+      SERVER_HOST: ${SERVER_HOST}
       KC_PROXY: edge
       KC_LOG_LEVEL: DEBUG
       KC_FEATURES: hostname
@@ -127,8 +128,8 @@ services:
     ports:
       - 8888:8080
     environment:
-      minio.access.key: minioadmin
-      minio.access.secret: minioadmin
+      minio.access.key: webprotege
+      minio.access.secret: webprotege
       minio.endPoint: http://minio:9000
       KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak/
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
