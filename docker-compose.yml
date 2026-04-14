@@ -135,7 +135,7 @@ services:
       webprotege.websocketUrl: wss://${SERVER_HOST}/wsapps
       webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
       webprotege.fileUploadurl: http://${SERVER_HOST}
-      webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
+      webprotege.keycloakLogoutUrl: http://${SERVER_HOST}/keycloak/realms/webprotege/protocol/openid-connect/logout
       webprotege.rabbit.timeout: 300000
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       _JAVA_OPTIONS: >
