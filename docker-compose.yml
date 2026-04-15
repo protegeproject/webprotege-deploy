@@ -1,7 +1,7 @@
 services:
 
   mongo:
-    image: mongo
+    image: mongo:8.0.10
     ports:
       - 27017:27017
     volumes:
@@ -10,7 +10,7 @@ services:
       - elk
 
   rabbitmq:
-    image: rabbitmq:management
+    image: rabbitmq:4.1.1-management
     restart: "no"
     ports:
       - "5672:5672"
@@ -57,14 +57,14 @@ services:
       - elk
 
   zipkin:
-    image: openzipkin/zipkin
+    image: openzipkin/zipkin:3.3.0
     ports:
       - 9411:9411
     networks:
       - elk
 
   minio:
-    image: minio/minio
+    image: minio/minio:RELEASE.2024-05-10T01-41-38Z
     command: [ "server", "/data", "--console-address", ":9001" ]
     restart: always
     volumes:
@@ -400,7 +400,7 @@ services:
       - elk
 
   mailpit:
-    image: axllent/mailpit
+    image: axllent/mailpit:v1.29.5
     ports:
       - 8025:8025
       - 1025:1025
