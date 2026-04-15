@@ -160,7 +160,6 @@ The stack includes the following services:
 | mongo | MongoDB database | 27017 |
 | rabbitmq | Message broker | 5672, 15672 |
 | minio | Object storage | 9000, 9001 |
-| zipkin | Distributed tracing | 9411 |
 | elasticsearch | Log storage | 9200 |
 | logstash | Log pipeline | 5044 |
 | filebeat | Log shipper | — |

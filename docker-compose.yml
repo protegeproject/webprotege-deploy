@@ -56,13 +56,6 @@ services:
     networks:
       - elk
 
-  zipkin:
-    image: openzipkin/zipkin:3.3.0
-    ports:
-      - 9411:9411
-    networks:
-      - elk
-
   minio:
     image: minio/minio:RELEASE.2024-05-10T01-41-38Z
     command: [ "server", "/data", "--console-address", ":9001" ]
@@ -89,10 +82,7 @@ services:
         condition: service_started
       rabbitmq:
         condition: service_healthy
-      zipkin:
-        condition: service_started
     environment:
-      spring.zipkin.baseUrl: http://zipkin:9411
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE: NONE
       SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
@@ -158,15 +148,12 @@ services:
         condition: service_healthy
       mongo:
         condition: service_started
-      zipkin:
-        condition: service_started
       rabbitmq:
         condition: service_healthy
     environment:
       spring.data.mongodb.host: mongo
       spring.data.mongodb.database: webprotege
       keycloak.jwk-set-uri: http://keycloak:8080
-      spring.zipkin.baseUrl: http://zipkin:9411
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010}
@@ -184,8 +171,6 @@ services:
       keycloak:
         condition: service_healthy
       mongo:
-        condition: service_started
-      zipkin:
         condition: service_started
       rabbitmq:
         condition: service_healthy
@@ -210,8 +195,6 @@ services:
       - '5006:5006'
     depends_on:
       mongo:
-        condition: service_started
-      zipkin:
         condition: service_started
       rabbitmq:
         condition: service_healthy
@@ -239,8 +222,6 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
-      zipkin:
-        condition: service_started
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       webprotege.minio.accessKey: ${MINIO_ROOT_USER:-webprotege}
@@ -261,8 +242,6 @@ services:
       rabbitmq:
         condition: service_healthy
       minio:
-        condition: service_started
-      zipkin:
         condition: service_started
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
@@ -285,12 +264,9 @@ services:
     depends_on:
       mongo:
         condition: service_started
-      zipkin:
-        condition: service_started
       rabbitmq:
         condition: service_healthy
     environment:
-      spring.zipkin.baseUrl: http://zipkin:9411
       webprotege.minio.accessKey: ${MINIO_ROOT_USER:-webprotege}
       webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD:-webprotege}
       webprotege.minio.endPoint: http://minio:9000
