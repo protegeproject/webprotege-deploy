@@ -106,6 +106,48 @@ After registration, sign in with your email and password.
 - Your name appears in the top navigation
 - You see options to create or access ontology projects
 
+## First-Admin Bootstrap
+
+On a fresh install, no user has administrative access. The first registered
+user must be granted the `SystemAdmin` role in Keycloak before WebProtege's
+admin features (creating projects, managing users, editing application
+settings) become available.
+
+This is a one-time manual step per install. A config-driven alternative is
+tracked in
+[webprotege-authorization-service#36](https://github.com/protegeproject/webprotege-authorization-service/issues/36).
+
+### Grant the SystemAdmin role
+
+1. Sign in to the Keycloak admin console at:
+
+   ```
+   http://webprotege-local.edu/keycloak/admin/
+   ```
+
+   Use the default credentials `admin` / `password`.  **Change these before
+   any deployment that is reachable beyond your local machine.**
+
+2. In the left sidebar, switch the realm dropdown from `master` to
+   `webprotege`.
+
+3. Navigate to **Clients → webprotege → Roles → SystemAdmin → Users in role**
+   (or **Assign users**, depending on Keycloak version).
+
+4. Assign the role to the user account you registered earlier.
+
+5. Sign out of WebProtege and sign back in — the new role is picked up from
+   the fresh JWT.  You now have full admin access.
+
+### Enable self-service project creation
+
+By default, only users with an explicit `ProjectCreator` role assignment can
+create new projects.  To let any signed-in user create projects:
+
+1. In WebProtege, navigate to **Application Settings** (admin menu).
+2. Enable **Empty project creation allowed**.
+3. Save.
+
 ## Services
 
 The stack includes the following services:
