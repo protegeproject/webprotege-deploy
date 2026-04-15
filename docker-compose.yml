@@ -38,8 +38,8 @@ services:
       KC_HOSTNAME_STRICT: "false"
       KC_HTTP_RELATIVE_PATH: /keycloak
       KC_HTTP_ENABLED: "true"
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: password
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-password}
       SERVER_HOST: ${SERVER_HOST}
       KC_PROXY: edge
       KC_LOG_LEVEL: DEBUG
@@ -47,7 +47,9 @@ services:
     volumes:
       - keycloak-h2-directory:/opt/keycloak/data
     healthcheck:
-      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak", "--realm", "master", "--user", "admin", "--password", "password"]
+      test:
+        - CMD-SHELL
+        - '/opt/keycloak/bin/kcadm.sh get realms/webprotege --server "http://localhost:8080$${KC_HTTP_RELATIVE_PATH:-}" --realm master --user "$$KEYCLOAK_ADMIN" --password "$$KEYCLOAK_ADMIN_PASSWORD"'
       interval: 10s
       timeout: 5s
       retries: 10

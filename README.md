@@ -125,8 +125,9 @@ tracked in
    http://webprotege-local.edu/keycloak/admin/
    ```
 
-   Use the default credentials `admin` / `password`.  **Change these before
-   any deployment that is reachable beyond your local machine.**
+   Use the credentials from `KEYCLOAK_ADMIN` and `KEYCLOAK_ADMIN_PASSWORD`
+   in your `.env` file.  **Change these from the defaults before any
+   deployment that is reachable beyond your local machine.**
 
 2. In the left sidebar, switch the realm dropdown from `master` to
    `webprotege`.
