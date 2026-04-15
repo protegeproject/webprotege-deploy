@@ -42,7 +42,7 @@ services:
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-password}
       SERVER_HOST: ${SERVER_HOST}
       KC_PROXY: edge
-      KC_LOG_LEVEL: DEBUG
+      KC_LOG_LEVEL: ${KC_LOG_LEVEL:-INFO}
       KC_FEATURES: hostname
     volumes:
       - keycloak-h2-directory:/opt/keycloak/data
@@ -73,8 +73,8 @@ services:
       - '9000:9000'
       - '9001:9001'
     environment:
-      MINIO_ROOT_USER: webprotege
-      MINIO_ROOT_PASSWORD: webprotege
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-webprotege}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-webprotege}
     networks:
       - elk
 
@@ -97,8 +97,8 @@ services:
       SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE: NONE
       SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
       webprotege.minio.bucketName: "webprotege-uploads"
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER:-webprotege}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD:-webprotege}
       webprotege.minio.endPoint: http://minio:9000
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://${SERVER_HOST}/keycloak/realms/webprotege
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://${SERVER_HOST}/keycloak/realms/webprotege
@@ -106,9 +106,7 @@ services:
       spring.servlet.multipart.max-request-size: 300MB
       WEBPROTEGE_ALLOWEDORIGIN: http://${SERVER_HOST}
       webprotege.rabbit.timeout: 600000
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
+      _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008}
     logging:
       driver: "json-file"
       options:
@@ -130,8 +128,8 @@ services:
     ports:
       - 8888:8080
     environment:
-      minio.access.key: webprotege
-      minio.access.secret: webprotege
+      minio.access.key: ${MINIO_ROOT_USER:-webprotege}
+      minio.access.secret: ${MINIO_ROOT_PASSWORD:-webprotege}
       minio.endPoint: http://minio:9000
       KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak/
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
@@ -141,9 +139,7 @@ services:
       webprotege.keycloakLogoutUrl: http://${SERVER_HOST}/keycloak/realms/webprotege/protocol/openid-connect/logout
       webprotege.rabbit.timeout: 300000
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+      _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006}
     logging:
       driver: "json-file"
       options:
@@ -173,9 +169,7 @@ services:
       spring.zipkin.baseUrl: http://zipkin:9411
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
+      _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010}
     logging:
       driver: "json-file"
       options:
@@ -229,9 +223,7 @@ services:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
 
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+      _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006}
     logging:
       driver: "json-file"
       options:
@@ -251,8 +243,8 @@ services:
         condition: service_started
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER:-webprotege}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD:-webprotege}
       webprotege.minio.endPoint: http://minio:9000
     logging:
       driver: "json-file"
@@ -274,8 +266,8 @@ services:
         condition: service_started
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER:-webprotege}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD:-webprotege}
       webprotege.minio.endPoint: http://minio:9000
     logging:
       driver: "json-file"
@@ -299,14 +291,12 @@ services:
         condition: service_healthy
     environment:
       spring.zipkin.baseUrl: http://zipkin:9411
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER:-webprotege}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD:-webprotege}
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005}
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       webprotege.rabbit.timeout: 600000
     logging:
