@@ -74,7 +74,7 @@ image's entrypoint script — no manual Keycloak setup is required.
 To follow startup progress:
 
 ```bash
-docker compose logs -f keycloak
+docker compose logs -f webprotege-keycloak
 ```
 
 Look for `[entrypoint] Realm configuration complete.` to confirm the
@@ -156,7 +156,7 @@ The stack includes the following services:
 | Service | Description | Port |
 |---|---|---|
 | nginx | Reverse proxy (entry point) | 80 |
-| keycloak | Identity and access management | 8080 |
+| webprotege-keycloak | Identity and access management | 8080 |
 | mongo | MongoDB database | 27017 |
 | rabbitmq | Message broker | 5672, 15672 |
 | minio | Object storage | 9000, 9001 |
@@ -227,7 +227,7 @@ docker compose logs <service-name>
 your hosts file entry.  Check the Keycloak entrypoint logs:
 
 ```bash
-docker compose logs keycloak | grep "\[entrypoint\]"
+docker compose logs webprotege-keycloak | grep "\[entrypoint\]"
 ```
 
 ## SMTP Configuration

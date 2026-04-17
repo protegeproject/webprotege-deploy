@@ -24,7 +24,7 @@ services:
       - elk
 
 
-  keycloak:
+  webprotege-keycloak:
     image: protegeproject/webprotege-keycloak:2.0.0
     command: [ "start-dev" ]
     ports:
@@ -75,7 +75,7 @@ services:
     ports:
       - '5008:5008'
     depends_on:
-      keycloak:
+      webprotege-keycloak:
         condition: service_healthy
       minio:
         condition: service_started
@@ -112,7 +112,7 @@ services:
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
-      keycloak:
+      webprotege-keycloak:
         condition: service_healthy
     ports:
       - 8888:8080
@@ -143,7 +143,7 @@ services:
     ports:
       - '5010:5010'
     depends_on:
-      keycloak:
+      webprotege-keycloak:
         condition: service_healthy
       mongo:
         condition: service_started
@@ -152,7 +152,7 @@ services:
     environment:
       spring.data.mongodb.host: mongo
       spring.data.mongodb.database: webprotege
-      keycloak.jwk-set-uri: http://keycloak:8080
+      keycloak.jwk-set-uri: http://webprotege-keycloak:8080
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010}
@@ -167,7 +167,7 @@ services:
   webprotege-user-management-service:
     image: protegeproject/webprotege-user-management-service:1.0.10
     depends_on:
-      keycloak:
+      webprotege-keycloak:
         condition: service_healthy
       mongo:
         condition: service_started
@@ -374,7 +374,7 @@ services:
         condition: service_started
       webprotege-gwt-api-gateway:
         condition: service_started
-      keycloak:
+      webprotege-keycloak:
         condition: service_healthy
       kibana:
         condition: service_healthy
