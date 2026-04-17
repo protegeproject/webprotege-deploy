@@ -371,7 +371,7 @@ services:
       start_period: 60s
 
   nginx:
-    image: protegeproject/webprotege-nginx:2.0.1
+    image: protegeproject/webprotege-nginx:2.0.2
     hostname: ${SERVER_HOST}
     ports:
       - 80:80
