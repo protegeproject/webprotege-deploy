@@ -72,6 +72,7 @@ services:
 
   webprotege-gwt-api-gateway:
     image: protegeproject/webprotege-gwt-api-gateway:3.0.2
+    restart: on-failure
     ports:
       - '5008:5008'
     depends_on:
@@ -90,7 +91,12 @@ services:
       webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD:-webprotege}
       webprotege.minio.endPoint: http://minio:9000
       SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://${SERVER_HOST}/keycloak/realms/webprotege
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_AUTHORIZATION_URI: http://${SERVER_HOST}/keycloak/realms/webprotege/protocol/openid-connect/auth
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_TOKEN_URI: http://webprotege-keycloak:8080/keycloak/realms/webprotege/protocol/openid-connect/token
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_JWK_SET_URI: http://webprotege-keycloak:8080/keycloak/realms/webprotege/protocol/openid-connect/certs
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_USER_INFO_URI: http://webprotege-keycloak:8080/keycloak/realms/webprotege/protocol/openid-connect/userinfo
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://${SERVER_HOST}/keycloak/realms/webprotege
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://webprotege-keycloak:8080/keycloak/realms/webprotege/protocol/openid-connect/certs
       spring.servlet.multipart.max-file-size: 300MB
       spring.servlet.multipart.max-request-size: 300MB
       WEBPROTEGE_ALLOWEDORIGIN: http://${SERVER_HOST}
