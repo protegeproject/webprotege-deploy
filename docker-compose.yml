@@ -358,19 +358,26 @@ services:
       elasticsearch:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5601"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:5601/kibana/api/status | grep -q '\"level\":\"available\"'"]
       interval: 30s
       timeout: 10s
-      retries: 5
+      retries: 10
+      start_period: 60s
 
   nginx:
-    image: protegeproject/webprotege-nginx:2.0.0
+    image: protegeproject/webprotege-nginx:2.0.1
     hostname: ${SERVER_HOST}
     ports:
       - 80:80
     depends_on:
-      - webprotege-gwt-ui-server
-      - keycloak
+      webprotege-gwt-ui-server:
+        condition: service_started
+      webprotege-gwt-api-gateway:
+        condition: service_started
+      keycloak:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
     networks:
       - elk
 
