@@ -25,7 +25,7 @@ services:
 
 
   keycloak:
-    image: protegeproject/webprotege-keycloak:1.2.0
+    image: protegeproject/webprotege-keycloak:2.0.0
     command: [ "start-dev" ]
     ports:
       - 8080:8080
@@ -41,7 +41,6 @@ services:
       KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
       KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-password}
       SERVER_HOST: ${SERVER_HOST}
-      KC_PROXY: edge
       KC_LOG_LEVEL: ${KC_LOG_LEVEL:-INFO}
       KC_FEATURES: hostname
     volumes:
