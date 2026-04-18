@@ -25,8 +25,7 @@ services:
 
 
   webprotege-keycloak:
-    image: protegeproject/webprotege-keycloak:2.0.0
-    command: [ "start-dev" ]
+    image: protegeproject/webprotege-keycloak:2.0.1
     ports:
       - 8080:8080
     depends_on:
