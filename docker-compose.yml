@@ -46,12 +46,18 @@ services:
     volumes:
       - keycloak-h2-directory:/opt/keycloak/data
     healthcheck:
+      # Verify the realm's frontendUrl has been patched by entrypoint.sh to
+      # match SERVER_HOST, not just that the realm exists.  Without the
+      # frontendUrl check the healthcheck can pass in the window between
+      # realm import and the entrypoint's kcadm patch, during which
+      # Keycloak serves stale discovery documents.  Tracked upstream in
+      # https://github.com/protegeproject/webprotege-keycloak/issues/6.
       test:
         - CMD-SHELL
-        - '/opt/keycloak/bin/kcadm.sh get realms/webprotege --server "http://localhost:8080$${KC_HTTP_RELATIVE_PATH:-}" --realm master --user "$$KEYCLOAK_ADMIN" --password "$$KEYCLOAK_ADMIN_PASSWORD"'
+        - '/opt/keycloak/bin/kcadm.sh get realms/webprotege --fields "attributes(frontendUrl)" --server "http://localhost:8080$${KC_HTTP_RELATIVE_PATH:-}" --realm master --user "$$KEYCLOAK_ADMIN" --password "$$KEYCLOAK_ADMIN_PASSWORD" | grep -q ''"frontendUrl" : "http://${SERVER_HOST}/keycloak"'''
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 30
     networks:
       - elk
 
