@@ -238,4 +238,5 @@ catches all outgoing email.  Access the Mailpit inbox at
 http://webprotege-local.edu:8025.
 
 The SMTP settings are defined in the Keycloak realm JSON
-(`webprotege.json`) under `smtpServer`.
+([`webprotege.json`](https://github.com/protegeproject/webprotege-keycloak/blob/main/webprotege.json))
+under `smtpServer`.
