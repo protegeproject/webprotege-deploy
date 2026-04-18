@@ -376,7 +376,7 @@ services:
       retries: 10
       start_period: 60s
 
-  nginx:
+  webprotege-nginx:
     image: protegeproject/webprotege-nginx:2.0.2
     hostname: ${SERVER_HOST}
     ports:

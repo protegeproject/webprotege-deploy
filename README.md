@@ -155,7 +155,7 @@ The stack includes the following services:
 
 | Service | Description | Port |
 |---|---|---|
-| nginx | Reverse proxy (entry point) | 80 |
+| webprotege-nginx | Reverse proxy (entry point) | 80 |
 | webprotege-keycloak | Identity and access management | 8080 |
 | mongo | MongoDB database | 27017 |
 | rabbitmq | Message broker | 5672, 15672 |
