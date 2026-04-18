@@ -55,9 +55,9 @@ services:
       test:
         - CMD-SHELL
         - '/opt/keycloak/bin/kcadm.sh get realms/webprotege --fields "attributes(frontendUrl)" --server "http://localhost:8080$${KC_HTTP_RELATIVE_PATH:-}" --realm master --user "$$KEYCLOAK_ADMIN" --password "$$KEYCLOAK_ADMIN_PASSWORD" | grep -q ''"frontendUrl" : "http://${SERVER_HOST}/keycloak"'''
-      interval: 10s
+      interval: 5s
       timeout: 5s
-      retries: 30
+      retries: 60
     networks:
       - elk
 
