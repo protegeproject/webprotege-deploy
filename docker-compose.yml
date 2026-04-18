@@ -1,9 +1,7 @@
-version: '3'
-
 services:
 
   mongo:
-    image: mongo
+    image: mongo:8.0.10
     ports:
       - 27017:27017
     volumes:
@@ -12,7 +10,7 @@ services:
       - elk
 
   rabbitmq:
-    image: rabbitmq:management
+    image: rabbitmq:4.1.1-management
     restart: "no"
     ports:
       - "5672:5672"
@@ -26,9 +24,8 @@ services:
       - elk
 
 
-  keycloak:
-    image: keycloak/keycloak:26.1
-    command: [ "start-dev" ]
+  webprotege-keycloak:
+    image: protegeproject/webprotege-keycloak:2.0.1
     ports:
       - 8080:8080
     depends_on:
@@ -36,35 +33,35 @@ services:
         condition: service_healthy
     environment:
       KC_PROXY_HEADERS: xforwarded
-      KC_HOSTNAME: webprotege-local.edu
+      KC_HOSTNAME: ${SERVER_HOST}
       KC_HOSTNAME_STRICT: "false"
       KC_HTTP_RELATIVE_PATH: /keycloak
       KC_HTTP_ENABLED: "true"
-      KEYCLOAK_ADMIN: admin
-      KEYCLOAK_ADMIN_PASSWORD: password
-      KC_PROXY: edge
-      KC_LOG_LEVEL: DEBUG
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-password}
+      SERVER_HOST: ${SERVER_HOST}
+      KC_LOG_LEVEL: ${KC_LOG_LEVEL:-INFO}
       KC_FEATURES: hostname
     volumes:
       - keycloak-h2-directory:/opt/keycloak/data
-      - ./keycloak:/tmp
     healthcheck:
-      test: ["CMD", "/opt/keycloak/bin/kcadm.sh", "get", "realms/webprotege", "--server", "http://localhost:8080/keycloak", "--realm", "master", "--user", "admin", "--password", "password"]
-      interval: 10s
+      # Verify the realm's frontendUrl has been patched by entrypoint.sh to
+      # match SERVER_HOST, not just that the realm exists.  Without the
+      # frontendUrl check the healthcheck can pass in the window between
+      # realm import and the entrypoint's kcadm patch, during which
+      # Keycloak serves stale discovery documents.  Tracked upstream in
+      # https://github.com/protegeproject/webprotege-keycloak/issues/6.
+      test:
+        - CMD-SHELL
+        - '/opt/keycloak/bin/kcadm.sh get realms/webprotege --fields "attributes(frontendUrl)" --server "http://localhost:8080$${KC_HTTP_RELATIVE_PATH:-}" --realm master --user "$$KEYCLOAK_ADMIN" --password "$$KEYCLOAK_ADMIN_PASSWORD" | grep -q ''"frontendUrl" : "http://${SERVER_HOST}/keycloak"'''
+      interval: 5s
       timeout: 5s
-      retries: 10
-    networks:
-      - elk
-
-  zipkin:
-    image: openzipkin/zipkin
-    ports:
-      - 9411:9411
+      retries: 60
     networks:
       - elk
 
   minio:
-    image: minio/minio
+    image: minio/minio:RELEASE.2024-05-10T01-41-38Z
     command: [ "server", "/data", "--console-address", ":9001" ]
     restart: always
     volumes:
@@ -73,42 +70,43 @@ services:
       - '9000:9000'
       - '9001:9001'
     environment:
-      MINIO_ROOT_USER: webprotege
-      MINIO_ROOT_PASSWORD: webprotege
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER:-webprotege}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-webprotege}
     networks:
       - elk
 
   webprotege-gwt-api-gateway:
     image: protegeproject/webprotege-gwt-api-gateway:3.0.2
+    restart: on-failure
     ports:
       - '5008:5008'
     depends_on:
-      keycloak:
+      webprotege-keycloak:
         condition: service_healthy
       minio:
         condition: service_started
       rabbitmq:
         condition: service_healthy
-      zipkin:
-        condition: service_started
     environment:
-      spring.zipkin.baseUrl: http://zipkin:9411
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_RABBITMQ_PUBLISHER_CONFIRM_TYPE: NONE
       SPRING_RABBITMQ_PUBLISHER_RETURNS: "FALSE"
       webprotege.minio.bucketName: "webprotege-uploads"
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER:-webprotege}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD:-webprotege}
       webprotege.minio.endPoint: http://minio:9000
-      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://webprotege-local.edu/keycloak/realms/webprotege
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://webprotege-local.edu/keycloak/realms/webprotege
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_ISSUER_URI: http://${SERVER_HOST}/keycloak/realms/webprotege
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_AUTHORIZATION_URI: http://${SERVER_HOST}/keycloak/realms/webprotege/protocol/openid-connect/auth
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_TOKEN_URI: http://webprotege-keycloak:8080/keycloak/realms/webprotege/protocol/openid-connect/token
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_JWK_SET_URI: http://webprotege-keycloak:8080/keycloak/realms/webprotege/protocol/openid-connect/certs
+      SPRING_SECURITY_OAUTH2_CLIENT_PROVIDER_KEYCLOAK_USER_INFO_URI: http://webprotege-keycloak:8080/keycloak/realms/webprotege/protocol/openid-connect/userinfo
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://${SERVER_HOST}/keycloak/realms/webprotege
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://webprotege-keycloak:8080/keycloak/realms/webprotege/protocol/openid-connect/certs
       spring.servlet.multipart.max-file-size: 300MB
       spring.servlet.multipart.max-request-size: 300MB
       WEBPROTEGE_ALLOWEDORIGIN: http://${SERVER_HOST}
       webprotege.rabbit.timeout: 600000
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008
+      _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008}
     logging:
       driver: "json-file"
       options:
@@ -117,7 +115,7 @@ services:
     networks:
       - elk
     extra_hosts:
-      - "webprotege-local.edu:host-gateway"
+      - "${SERVER_HOST}:host-gateway"
 
 
   webprotege-gwt-ui-server:
@@ -125,25 +123,23 @@ services:
     depends_on:
       webprotege-gwt-api-gateway:
         condition: service_started
-      keycloak:
+      webprotege-keycloak:
         condition: service_healthy
     ports:
       - 8888:8080
     environment:
-      minio.access.key: minioadmin
-      minio.access.secret: minioadmin
+      minio.access.key: ${MINIO_ROOT_USER:-webprotege}
+      minio.access.secret: ${MINIO_ROOT_PASSWORD:-webprotege}
       minio.endPoint: http://minio:9000
       KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak/
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
       webprotege.websocketUrl: wss://${SERVER_HOST}/wsapps
       webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
       webprotege.fileUploadurl: http://${SERVER_HOST}
-      webprotege.keycloakLogoutUrl: ${KEYCLOAK_LOGOUT_URL}
+      webprotege.keycloakLogoutUrl: http://${SERVER_HOST}/keycloak/realms/webprotege/protocol/openid-connect/logout
       webprotege.rabbit.timeout: 300000
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+      _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006}
     logging:
       driver: "json-file"
       options:
@@ -158,24 +154,19 @@ services:
     ports:
       - '5010:5010'
     depends_on:
-      keycloak:
+      webprotege-keycloak:
         condition: service_healthy
       mongo:
-        condition: service_started
-      zipkin:
         condition: service_started
       rabbitmq:
         condition: service_healthy
     environment:
       spring.data.mongodb.host: mongo
       spring.data.mongodb.database: webprotege
-      keycloak.jwk-set-uri: http://keycloak:8080
-      spring.zipkin.baseUrl: http://zipkin:9411
+      keycloak.jwk-set-uri: http://webprotege-keycloak:8080
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010
+      _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010}
     logging:
       driver: "json-file"
       options:
@@ -187,11 +178,9 @@ services:
   webprotege-user-management-service:
     image: protegeproject/webprotege-user-management-service:1.0.10
     depends_on:
-      keycloak:
+      webprotege-keycloak:
         condition: service_healthy
       mongo:
-        condition: service_started
-      zipkin:
         condition: service_started
       rabbitmq:
         condition: service_healthy
@@ -217,8 +206,6 @@ services:
     depends_on:
       mongo:
         condition: service_started
-      zipkin:
-        condition: service_started
       rabbitmq:
         condition: service_healthy
     environment:
@@ -229,9 +216,7 @@ services:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
 
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006
+      _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5006}
     logging:
       driver: "json-file"
       options:
@@ -247,12 +232,10 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
-      zipkin:
-        condition: service_started
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER:-webprotege}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD:-webprotege}
       webprotege.minio.endPoint: http://minio:9000
     logging:
       driver: "json-file"
@@ -270,12 +253,10 @@ services:
         condition: service_healthy
       minio:
         condition: service_started
-      zipkin:
-        condition: service_started
     environment:
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER:-webprotege}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD:-webprotege}
       webprotege.minio.endPoint: http://minio:9000
     logging:
       driver: "json-file"
@@ -293,20 +274,15 @@ services:
     depends_on:
       mongo:
         condition: service_started
-      zipkin:
-        condition: service_started
       rabbitmq:
         condition: service_healthy
     environment:
-      spring.zipkin.baseUrl: http://zipkin:9411
-      webprotege.minio.accessKey: webprotege
-      webprotege.minio.secretKey: webprotege
+      webprotege.minio.accessKey: ${MINIO_ROOT_USER:-webprotege}
+      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD:-webprotege}
       webprotege.minio.endPoint: http://minio:9000
       webprotege.directories.data: /srv/webprotege
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
-      _JAVA_OPTIONS: >
-        -Xdebug
-        -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005
+      _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005}
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
       webprotege.rabbit.timeout: 600000
     logging:
@@ -393,19 +369,34 @@ services:
       elasticsearch:
         condition: service_healthy
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:5601"]
+      test: ["CMD-SHELL", "curl -fsS http://localhost:5601/kibana/api/status | grep -q '\"level\":\"available\"'"]
       interval: 30s
       timeout: 10s
-      retries: 5
+      retries: 10
+      start_period: 60s
 
-  nginx:
-    image: protegeproject/webprotege-nginx:2.0.0
+  webprotege-nginx:
+    image: protegeproject/webprotege-nginx:2.0.2
     hostname: ${SERVER_HOST}
     ports:
       - 80:80
     depends_on:
-      - webprotege-gwt-ui-server
-      - keycloak
+      webprotege-gwt-ui-server:
+        condition: service_started
+      webprotege-gwt-api-gateway:
+        condition: service_started
+      webprotege-keycloak:
+        condition: service_healthy
+      kibana:
+        condition: service_healthy
+    networks:
+      - elk
+
+  mailpit:
+    image: axllent/mailpit:v1.29.5
+    ports:
+      - 8025:8025
+      - 1025:1025
     networks:
       - elk
 
