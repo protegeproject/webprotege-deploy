@@ -133,7 +133,7 @@ services:
       minio.endPoint: http://minio:9000
       KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak/
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
-      webprotege.websocketUrl: wss://${SERVER_HOST}/wsapps
+      webprotege.websocketUrl: ws://${SERVER_HOST}/wsapps
       webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
       webprotege.fileUploadurl: http://${SERVER_HOST}
       webprotege.keycloakLogoutUrl: http://${SERVER_HOST}/keycloak/realms/webprotege/protocol/openid-connect/logout
