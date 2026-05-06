@@ -7,7 +7,7 @@ services:
     volumes:
       - mongo-data-directory:/data/db
     networks:
-      - elk
+      - webprotege
 
   rabbitmq:
     image: rabbitmq:4.1.1-management
@@ -21,7 +21,7 @@ services:
       timeout: 10s
       retries: 5
     networks:
-      - elk
+      - webprotege
 
 
   webprotege-keycloak:
@@ -58,7 +58,7 @@ services:
       timeout: 5s
       retries: 60
     networks:
-      - elk
+      - webprotege
 
   minio:
     image: minio/minio:RELEASE.2024-05-10T01-41-38Z
@@ -73,7 +73,7 @@ services:
       MINIO_ROOT_USER: ${MINIO_ROOT_USER:-webprotege}
       MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD:-webprotege}
     networks:
-      - elk
+      - webprotege
 
   webprotege-gwt-api-gateway:
     image: protegeproject/webprotege-gwt-api-gateway:3.0.2
@@ -113,7 +113,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - elk
+      - webprotege
     extra_hosts:
       - "${SERVER_HOST}:host-gateway"
 
@@ -146,7 +146,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - elk
+      - webprotege
 
 
   webprotege-authorization-service:
@@ -173,7 +173,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - elk
+      - webprotege
 
   webprotege-user-management-service:
     image: protegeproject/webprotege-user-management-service:1.0.10
@@ -197,7 +197,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - elk
+      - webprotege
 
   webprotege-event-history-service:
     image: protegeproject/webprotege-event-history-service:2.0.0
@@ -223,7 +223,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - elk
+      - webprotege
 
   webprotege-ontology-processing-service:
     image: protegeproject/webprotege-ontology-processing-service:1.0.7
@@ -243,7 +243,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - elk
+      - webprotege
 
 
   webprotege-initial-revision-history-service:
@@ -264,7 +264,7 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - elk
+      - webprotege
 
   webprotege-backend-service:
     user: root
@@ -291,89 +291,9 @@ services:
         max-size: "10m"
         max-file: "3"
     networks:
-      - elk
+      - webprotege
     volumes:
     - webprotege-data-directory:/srv/webprotege
-
-  elasticsearch:
-    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.2
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-      - "ES_JAVA_OPTS=-Xms2048m -Xmx2048m"
-    ports:
-      - "9200:9200"
-    volumes:
-      - elasticsearch-data:/usr/share/elasticsearch/data
-    networks:
-      - elk
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9200"]
-      interval: 30s
-      timeout: 10s
-      retries: 5
-
-  logstash:
-    image: docker.elastic.co/logstash/logstash:8.12.2
-    ports:
-      - "5044:5044"
-      - "9600:9600"
-    environment:
-      LS_JAVA_OPTS: "-Xmx256m -Xms256m"
-    volumes:
-      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml:ro
-      - ./logstash/pipeline:/usr/share/logstash/pipeline:ro
-    networks:
-      - elk
-    depends_on:
-      - elasticsearch
-
-  filebeat:
-    image: docker.elastic.co/beats/filebeat:8.12.2
-    user: root
-    volumes:
-      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
-      - /var/lib/docker/containers:/var/lib/docker/containers:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-    networks:
-      - elk
-    depends_on:
-      - logstash
-    command: ["filebeat", "-e", "--strict.perms=false", "-c", "/usr/share/filebeat/filebeat.yml"]
-
-  kibana:
-    image: docker.elastic.co/kibana/kibana:8.12.2
-    ports:
-      - "5601:5601"
-    environment:
-      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
-      - XPACK_SAVED_OBJECTS_IMPORT=/usr/share/kibana/dashboards/webprotege-logs.ndjson
-      - ELASTICSEARCH_SERVICE_HOST=elasticsearch
-      - ELASTICSEARCH_SERVICE_PORT=9200
-      - XPACK_SECURITY_ENABLED=false
-      - ELASTICSEARCH_USERNAME=kibana_system
-      - ELASTICSEARCH_PASSWORD=kibana
-      - SERVER_BASEPATH=/kibana
-      - SERVER_REWRITEBASEPATH=true
-      - SERVER_PUBLICBASEURL=http://${SERVER_HOST}/kibana
-      - SERVER_HOST=0.0.0.0
-      - SERVER_NAME=kibana
-      - SERVER_MAXPAYLOADBYTES=1048576
-      - ELASTICSEARCH_SSL_VERIFICATIONMODE=none
-    volumes:
-      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml:ro
-      - ./kibana/dashboards:/usr/share/kibana/dashboards
-    networks:
-      - elk
-    depends_on:
-      elasticsearch:
-        condition: service_healthy
-    healthcheck:
-      test: ["CMD-SHELL", "curl -fsS http://localhost:5601/kibana/api/status | grep -q '\"level\":\"available\"'"]
-      interval: 30s
-      timeout: 10s
-      retries: 10
-      start_period: 60s
 
   webprotege-nginx:
     image: protegeproject/webprotege-nginx:2.0.2
@@ -387,10 +307,8 @@ services:
         condition: service_started
       webprotege-keycloak:
         condition: service_healthy
-      kibana:
-        condition: service_healthy
     networks:
-      - elk
+      - webprotege
 
   mailpit:
     image: axllent/mailpit:v1.29.5
@@ -398,7 +316,7 @@ services:
       - 8025:8025
       - 1025:1025
     networks:
-      - elk
+      - webprotege
 
 volumes:
 
@@ -406,9 +324,8 @@ volumes:
   mongo-data-directory:
   keycloak-h2-directory:
   minio_data:
-  elasticsearch-data:
 
 networks:
-  elk:
+  webprotege:
     driver: bridge
-    name: elk
+    name: webprotege
