@@ -305,14 +305,16 @@ services:
       rabbitmq:
         condition: service_healthy
     environment:
-      webprotege.minio.accessKey: ${MINIO_ROOT_USER:-webprotege}
-      webprotege.minio.secretKey: ${MINIO_ROOT_PASSWORD:-webprotege}
-      webprotege.minio.endPoint: http://minio:9000
+      # backend-service reads kebab-case webprotege.minio.* / webprotege.rabbitmq.* keys.
+      # The image bundles sensible defaults (mongo/rabbitmq/minio point at these service
+      # names); only deployment-specific overrides are set here.
+      webprotege.minio.access-key: ${MINIO_ROOT_USER:-webprotege}
+      webprotege.minio.secret-key: ${MINIO_ROOT_PASSWORD:-webprotege}
+      webprotege.rabbitmq.timeout: 600000   # 10 min, for long-running operations
       webprotege.directories.data: /srv/webprotege
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005}
       JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
-      webprotege.rabbit.timeout: 600000
     logging:
       driver: "json-file"
       options:
