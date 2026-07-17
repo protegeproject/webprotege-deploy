@@ -176,7 +176,7 @@ services:
       - webprotege
 
   webprotege-user-management-service:
-    image: protegeproject/webprotege-user-management-service:1.0.11
+    image: protegeproject/webprotege-user-management-service:1.0.12
     depends_on:
       webprotege-keycloak:
         condition: service_healthy
