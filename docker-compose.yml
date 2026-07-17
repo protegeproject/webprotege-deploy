@@ -314,7 +314,12 @@ services:
       webprotege.directories.data: /srv/webprotege
       SPRING_DATA_MONGODB_URI: "${MONGO_URL}"
       _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005}
-      JDK_JAVA_OPTIONS: --add-opens java.base/sun.net=ALL-UNNAMED
+      # mail.smtp.* system properties configure outbound email (sharing invitations,
+      # comment/watch notifications); the backend reads them from -D flags.
+      JDK_JAVA_OPTIONS: >-
+        --add-opens java.base/sun.net=ALL-UNNAMED
+        -Dmail.smtp.host=mailpit
+        -Dmail.smtp.port=1025
     logging:
       driver: "json-file"
       options:
