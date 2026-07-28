@@ -104,7 +104,6 @@ services:
       SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://webprotege-keycloak:8080/keycloak/realms/webprotege/protocol/openid-connect/certs
       spring.servlet.multipart.max-file-size: 300MB
       spring.servlet.multipart.max-request-size: 300MB
-      WEBPROTEGE_ALLOWEDORIGIN: http://${SERVER_HOST}
       webprotege.rabbit.timeout: 600000
       _JAVA_OPTIONS: ${ENABLE_JAVA_DEBUG:+-Xdebug -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5008}
     logging:
@@ -133,7 +132,6 @@ services:
       minio.endPoint: http://minio:9000
       KEYCLOAK_AUTH_URL: http://${SERVER_HOST}/keycloak/
       webprotege.gwt-api-gateway.endPoint: http://webprotege-gwt-api-gateway:7777
-      webprotege.websocketUrl: ws://${SERVER_HOST}/wsapps
       webprotege.logoutUrl: http://${SERVER_HOST}/webprotege/logout
       webprotege.fileUploadurl: http://${SERVER_HOST}
       webprotege.keycloakLogoutUrl: http://${SERVER_HOST}/keycloak/realms/webprotege/protocol/openid-connect/logout
