@@ -61,7 +61,8 @@ services:
       - webprotege
 
   minio:
-    image: minio/minio:RELEASE.2024-05-10T01-41-38Z
+    build: ./minio
+    image: webprotege-deploy/minio:RELEASE.2024-05-10T01-41-38Z
     command: [ "server", "/data", "--console-address", ":9001" ]
     restart: always
     volumes:
